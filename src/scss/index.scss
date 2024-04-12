@@ -1,0 +1,22 @@
+@import "global";
+@import "variables";
+@import "header";
+@import "footer";
+
+.card-container {
+  .card {
+    * {
+      font-size: 1rem;
+    }
+    img {
+      height: 16em;
+      object-fit: cover;
+    }
+    .card-rating {
+      img {
+        width: 1em;
+        height: 1em;
+      }
+    }
+  }
+}
