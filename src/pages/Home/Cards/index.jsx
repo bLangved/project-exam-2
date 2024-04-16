@@ -1,15 +1,14 @@
 import React from "react";
 import { API_BASE_URL } from "../../../constants/apiUrls";
 import useApi from "../../../hooks/useApi";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 function Cards() {
-  const endpoint = "venues";
+  const endpoint = "venues/";
   const result = useApi(`${API_BASE_URL}${endpoint}`);
   const data = result.data;
+  // console.log(data);
   const navigate = useNavigate();
-  console.log(data);
 
   const handleNavigate = (venueId, event) => {
     event.stopPropagation();
