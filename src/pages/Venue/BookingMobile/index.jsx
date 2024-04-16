@@ -1,15 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
+import Offcanvas from "react-bootstrap/Offcanvas";
+import { format, parseISO, differenceInDays } from "date-fns";
+import DateRangePicker from "../../../components/DateRangePicker";
 
 function BookingMobile() {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const handleDateChange = (start, end) => {
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  const getDaysDifference = (start, end) => {
+    if (start && end) {
+      const startParsed = parseISO(start);
+      const endParsed = parseISO(end);
+      return differenceInDays(endParsed, startParsed);
+    }
+    return 0;
+  };
+
   return (
     <section className="booking-mobile position-fixed d-lg-none w-100 bg-body-tertiary text-dark rounded-top-5 shadow-lg">
       <div className="mx-4 h-100 d-flex align-items-center">
-        <div className="fs-6 col-6 d-flex flex-column">
-          <span className="fw-bolder">Information</span>
-          <span className="fst-italic">2.-7.June</span>
+        <div className="fs-6 col-7 d-flex flex-column">
+          <button
+            className="btn p-0"
+            onClick={handleShow}
+            aria-controls="Open date selector"
+            aria-expanded={show}
+          >
+            {startDate && endDate ? (
+              <div className="d-flex flex-column">
+                <span className="fw-semibold me-auto">
+                  {getDaysDifference(startDate, endDate)} days
+                </span>
+                <span className="me-auto">
+                  {format(parseISO(startDate), "d. MMM")}
+                  <span className="mx-1">-</span>
+                  {format(parseISO(endDate), "d. MMM")}
+                </span>
+              </div>
+            ) : (
+              <span>Select dates</span>
+            )}
+          </button>
         </div>
-        <button className="btn btn-primary ms-auto col-6">Book avenue</button>
+        <button className="btn btn-primary px-1 ms-auto col-5">
+          Book avenue
+        </button>
       </div>
+      <Offcanvas show={show} onHide={handleClose}>
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Choose your dates</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <DateRangePicker
+            onDateChange={handleDateChange}
+            handleClose={handleClose}
+          />
+        </Offcanvas.Body>
+      </Offcanvas>
     </section>
   );
 }
