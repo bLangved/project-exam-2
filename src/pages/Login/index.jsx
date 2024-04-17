@@ -1,42 +1,94 @@
 import React from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  FloatingLabel,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   return (
     <main className="d-flex justify-content-center align-items-center vh-100">
       <Container>
         <Row className="justify-content-md-center">
-          <Col md={6}>
+          <Col md={9} lg={7} xl={6}>
             <Form>
-              <h3>Log in to your account</h3>
-              <p>Welcome back to Holidaze! Please enter your details.</p>
-
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email</Form.Label>
+              <section className="text-center">
+                <img
+                  src="/logo/logo-holidaze.png"
+                  alt="Holidaze logo"
+                  height="75"
+                  className="object-fit-contain mb-3"
+                />
+                <h1 className="display-4">Log in to your account</h1>
+                <p className="lead fs-6">
+                  Welcome back to Holidaze! Please enter your details.
+                </p>
+              </section>
+              <FloatingLabel
+                controlId="floatingInputEmail"
+                label="Email"
+                className="mb-3"
+                aria-describedby="emailHelpBlock"
+              >
                 <Form.Control type="email" placeholder="Enter your email" />
-              </Form.Group>
+                <Form.Text id="emailHelpBlock" className="text-danger">
+                  Your email must be a valid Noroff email.
+                </Form.Text>
+              </FloatingLabel>
 
-              <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" />
-              </Form.Group>
+              <FloatingLabel
+                controlId="floatingInputPassword"
+                label="Password"
+                className="mb-3"
+              >
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  aria-describedby="passwordHelpBlock"
+                />
+                <Form.Text id="passwordHelpBlock" className="text-danger">
+                  Your password must be 8-20 characters long, contain letters
+                  and numbers, and must not contain spaces, special characters,
+                  or emoji.
+                </Form.Text>
+              </FloatingLabel>
 
-              <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="Remember me" />
-              </Form.Group>
+              <div className="d-flex mb-3">
+                <Form.Group controlId="formBasicCheckbox">
+                  <Form.Check type="checkbox" label="Remember me" />
+                </Form.Group>
 
-              <Button variant="primary" type="submit">
+                <Link to="/" className="ms-auto">
+                  Forgot password
+                </Link>
+              </div>
+
+              <Button variant="primary" type="submit" className="w-100 mb-3">
                 Sign in
               </Button>
 
-              <Form.Text className="text-muted">
-                Already have an account? <Link to="/register">Register</Link>
-              </Form.Text>
-              <br />
-              <Form.Text>
-                Go back <Link to="/">Here</Link>
-              </Form.Text>
+              <div className="d-flex flex-column align-items-center">
+                <Form.Text className="text-body-secondary mb-3 fs-6">
+                  Already have an account? <Link to="/register">Register</Link>
+                </Form.Text>
+
+                <Form.Text className="text-body-secondary fs-6">
+                  <Link to="/">
+                    <FontAwesomeIcon
+                      icon={faArrowLeft}
+                      size="lg"
+                      className="pe-2"
+                    />
+                    Go back
+                  </Link>
+                </Form.Text>
+              </div>
             </Form>
           </Col>
         </Row>
