@@ -13,45 +13,65 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Register = () => {
+  const [validated, setValidated] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [firstNameValid, setFirstNameValid] = useState(true);
   const [lastName, setLastName] = useState("");
   const [lastNameValid, setLastNameValid] = useState(true);
-
   const [email, setEmail] = useState("");
+  const [emailValid, setEmailValid] = useState(true);
   const [password, setPassword] = useState("");
-
-  const [firstNameInvalid, setFirstNameInvalid] = useState(false);
-  const [lastNameInvalid, setLastNameInvalid] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(true);
 
   const handleFirstNameChange = (e) => {
     const input = e.target.value;
     setFirstName(input);
-    setFirstNameValid(/^[a-zA-ZæøåÆØÅöäüÖÄÜéÉâêîôûÂÊÎÔÛ]*$/.test(input));
+    const isValid = /^[a-zA-ZæøåÆØÅöäüÖÄÜéÉâêîôûÂÊÎÔÛ]+$/.test(input);
+    setFirstNameValid(isValid);
+    e.target.setCustomValidity(isValid ? "" : "Invalid first name");
   };
 
   const handleLastNameChange = (e) => {
     const input = e.target.value;
     setLastName(input);
-    setLastNameValid(/^[a-zA-ZæøåÆØÅöäüÖÄÜéÉâêîôûÂÊÎÔÛ]*$/.test(input));
+    const isValid = /^[a-zA-ZæøåÆØÅöäüÖÄÜéÉâêîôûÂÊÎÔÛ]+$/.test(input);
+    setLastNameValid(isValid);
+    e.target.setCustomValidity(isValid ? "" : "Invalid last name");
   };
 
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+    const input = e.target.value;
+    setEmail(input);
+    const isValid = /^[a-zA-Z0-9._-]+$/.test(input);
+    setEmailValid(isValid);
+    e.target.setCustomValidity(isValid ? "" : "Invalid email");
   };
+
   const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+    const input = e.target.value;
+    setPassword(input);
+    const isValid = input.length >= 8;
+    setPasswordValid(isValid);
+    e.target.setCustomValidity(isValid ? "" : "Invalid Password");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const fullEmail = email + "@stud.noroff.no";
-    const fullName = firstName + " " + lastName;
-    console.log(firstName);
-    console.log(lastName);
-    console.log(fullName);
-    console.log(fullEmail);
-    console.log(password);
+    const form = e.currentTarget;
+
+    if (!form.checkValidity()) {
+      e.stopPropagation();
+    } else {
+      const fullEmail = email + "@stud.noroff.no";
+      const fullName = firstName + " " + lastName;
+      console.log(firstName);
+      console.log(lastName);
+      console.log(fullName);
+      console.log(fullEmail);
+      console.log(password);
+      // Consider sending data to server here
+    }
+    setValidated(true);
   };
 
   return (
@@ -59,7 +79,7 @@ const Register = () => {
       <Container>
         <Row className="justify-content-md-center">
           <Col md={9} lg={7} xl={6}>
-            <Form>
+            <Form noValidate validated={validated} onSubmit={handleSubmit}>
               <section className="text-center">
                 <img
                   src="/logo/logo-holidaze.png"
@@ -78,6 +98,7 @@ const Register = () => {
                     className="mb-3"
                   >
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter your first name"
                       value={firstName}
@@ -98,6 +119,7 @@ const Register = () => {
                     className="mb-3"
                   >
                     <Form.Control
+                      required
                       type="text"
                       placeholder="Enter your last name"
                       value={lastName}
@@ -112,28 +134,35 @@ const Register = () => {
                   </FloatingLabel>
                 </Col>
               </Row>
-              <InputGroup size="lg">
+              <InputGroup size="md" hasValidation>
                 <FloatingLabel
                   controlId="floatingInputEmail"
                   label="Email"
                   className="d-flex"
                 >
                   <Form.Control
+                    required
                     type="text"
                     placeholder="Enter your email"
                     value={email}
                     onChange={handleEmailChange}
+                    isInvalid={!emailValid}
                     className="rounded-end-0"
                   />
-                  <InputGroup.Text className="rounded-start-0">
-                    @stud.noroff.no
-                  </InputGroup.Text>
                 </FloatingLabel>
+                <InputGroup.Text className="rounded-start-0">
+                  @stud.noroff.no
+                </InputGroup.Text>
+                {!emailValid && (
+                  <Form.Control.Feedback
+                    type="invalid w-100"
+                    className="small text-danger mt-1"
+                  >
+                    Email can only include the first section of your email,
+                    before @stud.noroff.no.
+                  </Form.Control.Feedback>
+                )}
               </InputGroup>
-              <Form.Text id="emailHelpBlock" className="text-danger">
-                Only write the first section of your email, before
-                @stud.noroff.no.
-              </Form.Text>
 
               <FloatingLabel
                 controlId="floatingPassword"
@@ -141,23 +170,21 @@ const Register = () => {
                 className="my-3"
               >
                 <Form.Control
+                  required
                   type="password"
                   placeholder="Password"
                   value={password}
                   onChange={handlePasswordChange}
+                  isInvalid={!passwordValid}
                 />
-                <Form.Text id="passwordHelpBlock" className="text-danger">
-                  Your password must be at least 8 characters long and must not
-                  contain spaces.
-                </Form.Text>
+                {!passwordValid && (
+                  <Form.Control.Feedback type="invalid">
+                    Password must be at least 8 characters long.
+                  </Form.Control.Feedback>
+                )}
               </FloatingLabel>
 
-              <Button
-                variant="primary"
-                // type="submit"
-                className="w-100 mb-3"
-                onClick={handleSubmit}
-              >
+              <Button variant="primary" type="submit" className="w-100 mb-3">
                 Get started
               </Button>
 
