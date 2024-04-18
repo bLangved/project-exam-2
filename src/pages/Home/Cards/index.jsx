@@ -7,7 +7,6 @@ function Cards() {
   const endpoint = "venues/";
   const result = useApi(`${API_BASE_URL}${endpoint}`);
   const data = result.data;
-  // console.log(data);
   const navigate = useNavigate();
 
   const handleNavigate = (venueId, event) => {

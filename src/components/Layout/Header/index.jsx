@@ -3,6 +3,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import Mobile from "./Mobile";
 import Desktop from "./Desktop";
 import { Link } from "react-router-dom";
+import logout from "../../../utilities/Logout";
 
 function Header() {
   const [show, setShow] = useState(false);
@@ -26,7 +27,12 @@ function Header() {
             <Link to="/login" className="mb-3">
               Login
             </Link>
-            <Link to="/register">Register</Link>
+            <Link to="/register" className="mb-3">
+              Register
+            </Link>
+            <button className="btn btn-primary" onClick={logout}>
+              Log out
+            </button>
           </div>
         </Offcanvas.Body>
       </Offcanvas>

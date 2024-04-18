@@ -7,12 +7,24 @@ import {
   Button,
   FloatingLabel,
   InputGroup,
+  Spinner,
 } from "react-bootstrap";
+import ModalCentered from "../../components/Modals/ModalCentered";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import useRegisterLogin from "../../hooks/useRegisterLogin";
+import { API_AUTH_ENDPOINT } from "../../constants/apiUrls";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const { sendRequest } = useRegisterLogin(`${API_AUTH_ENDPOINT}register/`);
+  const [loaderShow, setLoaderShow] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [statusCode, setStatusCode] = useState(null);
+  const [statusMessage, setStatusMessage] = useState("");
+
   const [validated, setValidated] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [firstNameValid, setFirstNameValid] = useState(true);
@@ -55,23 +67,36 @@ const Register = () => {
     e.target.setCustomValidity(isValid ? "" : "Invalid Password");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
 
     if (!form.checkValidity()) {
       e.stopPropagation();
+      setValidated(true);
     } else {
-      const fullEmail = email + "@stud.noroff.no";
-      const fullName = firstName + " " + lastName;
-      console.log(firstName);
-      console.log(lastName);
-      console.log(fullName);
-      console.log(fullEmail);
-      console.log(password);
-      // Consider sending data to server here
+      setValidated(true);
+      const userData = {
+        name: `${firstName}_${lastName}`,
+        email: `${email}@stud.noroff.no`,
+        password: password,
+      };
+
+      try {
+        setLoaderShow(true);
+        const data = await sendRequest("POST", userData);
+        if (data) {
+          console.log(data);
+          setStatusCode(data.data.status);
+          setStatusMessage("Account creation successful");
+          setModalShow(true);
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+      }
     }
     setValidated(true);
+    setLoaderShow(false);
   };
 
   return (
@@ -208,6 +233,22 @@ const Register = () => {
           </Col>
         </Row>
       </Container>
+      {loaderShow && (
+        <Spinner
+          variant="primary"
+          animation="border"
+          role="status"
+          className="position-fixed top-50 start-50"
+        >
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      )}
+      <ModalCentered
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        statusCode={statusCode}
+        statusMessage={statusMessage}
+      />
     </main>
   );
 };
