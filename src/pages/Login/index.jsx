@@ -64,7 +64,25 @@ const Login = () => {
         setLoaderShow(true);
         const data = await sendRequest("POST", userData);
         if (data) {
-          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("userName", JSON.stringify(data.data.name));
+          localStorage.setItem("userEmail", JSON.stringify(data.data.email));
+          localStorage.setItem("userBio", JSON.stringify(data.data.bio));
+          localStorage.setItem(
+            "userAvatarUrl",
+            JSON.stringify(data.data.avatar.url)
+          );
+          localStorage.setItem(
+            "userAvatarAlt",
+            JSON.stringify(data.data.avatar.alt)
+          );
+          localStorage.setItem(
+            "userBannerUrl",
+            JSON.stringify(data.data.banner.url)
+          );
+          localStorage.setItem(
+            "userBannerAlt",
+            JSON.stringify(data.data.banner.alt)
+          );
           localStorage.setItem(
             "accessToken",
             JSON.stringify(data.data.accessToken)
