@@ -88,3 +88,15 @@
     margin-top: -35px;
   }
 }
+
+.admin {
+  .button-group {
+    max-width: 750px;
+    button {
+      height: 7em;
+    }
+  }
+}
+.canvas-venue {
+  height: 97.5vh !important;
+}
