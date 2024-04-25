@@ -53,6 +53,7 @@ function Header() {
               <>
                 <Link
                   to="/profile"
+                  onClick={handleClose}
                   className="mb-3 d-flex align-items-center gap-2"
                 >
                   <FontAwesomeIcon
@@ -64,6 +65,7 @@ function Header() {
                 </Link>
                 <Link
                   to="/wishlist"
+                  onClick={handleClose}
                   className="mb-3 d-flex align-items-center gap-2"
                 >
                   <FontAwesomeIcon className="col-1" icon={faHeart} size="lg" />
@@ -71,6 +73,7 @@ function Header() {
                 </Link>
                 <Link
                   to="/admin"
+                  onClick={handleClose}
                   className="mb-3 d-flex align-items-center gap-2"
                 >
                   <FontAwesomeIcon className="col-1" icon={faHouse} size="lg" />
@@ -84,6 +87,7 @@ function Header() {
             ) : (
               <>
                 <Link
+                  onClick={handleClose}
                   to="/login"
                   className="mb-3 d-flex align-items-center gap-2"
                 >
@@ -96,6 +100,7 @@ function Header() {
                 </Link>
                 <Link
                   to="/register"
+                  onClick={handleClose}
                   className="mb-3 d-flex align-items-center gap-2"
                 >
                   <FontAwesomeIcon

@@ -14,6 +14,7 @@ function useManageUser(url) {
       const config = {
         method: method,
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
           "X-Noroff-API-Key": apikey,
         },
@@ -24,6 +25,7 @@ function useManageUser(url) {
         const response = await fetch(url, config);
         if (!response.ok) {
           const error = new Error(`HTTP error! status: ${response.status}`);
+          error.status = response.status;
           const responseBody = await response.json();
           error.responseBody = responseBody;
           throw error;

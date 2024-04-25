@@ -6,11 +6,14 @@ import {
   capitalizeWords,
   replaceSpecialCharacters,
 } from "../../utilities/TextHandling";
+import ModalUserEdit from "../../components/Modals/ModalUserEdit";
 
 function Profile() {
   const [userData, setUserData] = useState(null);
   const [venueData, setVenueData] = useState(null);
   const [bookingData, setBookingData] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
+  const [editType, setEditType] = useState(null);
 
   const userId = JSON.parse(localStorage.getItem("userName"));
   const profileUrl = `${API_BASE_URL}profiles/${userId}/`;
@@ -20,6 +23,19 @@ function Profile() {
   const { sendRequest: sendVenuesRequest } = useManageUser(profileVenuesUrl);
   const { sendRequest: sendBookingsRequest } =
     useManageUser(profileBookingsUrl);
+
+  function refreshProfileData() {
+    const fetchData = async () => {
+      try {
+        const data = await sendProfileRequest("GET");
+        setUserData(data);
+      } catch (error) {
+        console.error("Failed to fetch profile data:", error);
+      }
+    };
+
+    fetchData();
+  }
 
   // Profile data
   useEffect(() => {
@@ -53,9 +69,9 @@ function Profile() {
 
   // Profile bookings data
   useEffect(() => {
-    const fetchVenueData = async () => {
+    const fetchBookingsData = async () => {
       try {
-        const data = await sendVenuesRequest("GET");
+        const data = await sendBookingsRequest("GET");
         setBookingData(data);
         console.log("Booking Data:", data);
       } catch (error) {
@@ -63,11 +79,12 @@ function Profile() {
       }
     };
 
-    fetchVenueData();
+    fetchBookingsData();
   }, [sendBookingsRequest]);
 
   if (!userData) return <div>Loading...</div>;
 
+  // User data
   const {
     avatar = {},
     banner = {},
@@ -80,10 +97,45 @@ function Profile() {
   const avatarAlt = avatar.alt || "Profile image";
   const userName = capitalizeWords(replaceSpecialCharacters(apiName));
 
+  // // Venue data
+  // const {
+  //   avatar = {},
+  //   banner = {},
+  // } = venueData.data;
+  // const bannerUrl = banner.url || "/images/banner-placeholder.jpg";
+  // const bannerAlt = banner.alt || "Profile banner";
+
+  // // Booking data
+  // const {
+  //   avatar = {},
+  //   banner = {},
+  // } = bookingData.data;
+  // const bannerUrl = banner.url || "/images/banner-placeholder.jpg";
+  // const bannerAlt = banner.alt || "Profile banner";
+
+  const handleAvatarClick = () => {
+    setEditType("avatar");
+    setModalShow(true);
+  };
+
+  const handleBannerClick = () => {
+    setEditType("banner");
+    setModalShow(true);
+  };
+  const handleBioClick = () => {
+    setEditType("bio");
+    setModalShow(true);
+  };
+
   return (
     <article className="profile">
-      <div>
-        <Image src={bannerUrl} alt={bannerAlt} fluid />
+      <div className="profile-banner">
+        <Image
+          src={bannerUrl}
+          alt={bannerAlt}
+          fluid
+          onClick={handleBannerClick}
+        />
       </div>
       <div className="profile-avatar mx-auto position-relative border border-primary-subtle border-4 rounded-circle shadow">
         <Image
@@ -91,6 +143,7 @@ function Profile() {
           alt={avatarAlt}
           roundedCircle
           className="object-fit-cover h-100"
+          onClick={handleAvatarClick}
         />
       </div>
       <section className="container profile-about mb-5">
@@ -100,12 +153,16 @@ function Profile() {
         {bio ? (
           <>
             <p>{bio}</p>
-            <button className="btn btn-primary w-100">Change bio</button>
+            <button className="btn btn-primary w-100" onClick={handleBioClick}>
+              Change bio
+            </button>
           </>
         ) : (
           <>
             <p>{bio}</p>
-            <button className="btn btn-primary w-100">Add a bio</button>
+            <button className="btn btn-primary w-100" onClick={handleBioClick}>
+              Add a bio
+            </button>
           </>
         )}
       </section>
@@ -143,6 +200,12 @@ function Profile() {
           </section>
         </div>
       </div>
+      <ModalUserEdit
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        editType={editType}
+        onUpdateSuccess={refreshProfileData}
+      />
     </article>
   );
 }
