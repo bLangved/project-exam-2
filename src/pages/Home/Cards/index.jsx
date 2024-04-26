@@ -28,8 +28,8 @@ function Cards() {
               <article className="card h-100 p-0 border-0">
                 <img
                   className="card-img rounded-4"
-                  src={venue.media[0].url}
-                  alt={venue.media[0].alt}
+                  src={venue.media[0]?.url || "/images/placeholder.jpg"}
+                  alt={venue.media[0]?.alt || "Venue main image"}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/images/placeholder.jpg";

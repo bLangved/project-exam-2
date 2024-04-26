@@ -97,6 +97,34 @@
     }
   }
 }
+
 .canvas-venue {
   height: 97.5vh !important;
+  border-radius: 1rem 1rem 0 0;
+
+  @media screen and (min-width: 992px) {
+    width: 800px;
+    height: 800px !important;
+    left: 50%;
+    bottom: 15% !important;
+    margin: 0 auto;
+    border-radius: 1rem;
+  }
+
+  .add-img-prev-container {
+    .img-prev {
+      cursor: pointer;
+      .index-container {
+        div {
+          height: 1.5em;
+          width: 1.5em;
+          top: 10px;
+          left: 10px;
+        }
+      }
+      img {
+        max-height: 10em;
+      }
+    }
+  }
 }
