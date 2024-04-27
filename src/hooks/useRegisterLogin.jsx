@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 /**
  * Custom hook for registering and logging in user.
  *
@@ -17,11 +15,11 @@ function useRegisterLogin(url) {
 
     try {
       const response = await fetch(url, config);
-      if (response.ok) {
-        return await response.json();
-      } else {
+      if (!response.ok) {
         const error = response;
         throw error;
+      } else {
+        return await response.json();
       }
     } catch (error) {
       console.error("API error:", error);

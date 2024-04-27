@@ -51,7 +51,7 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
     }
 
     try {
-      const updatedUserData = await sendProfileUpdate("PUT", updateData);
+      const data = await sendProfileUpdate("PUT", updateData);
       setInputValue("");
       onHide();
       if (onUpdateSuccess) {

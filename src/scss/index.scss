@@ -103,7 +103,7 @@
   border-radius: 1rem 1rem 0 0;
 
   @media screen and (min-width: 992px) {
-    width: 800px;
+    width: 900px;
     height: 800px !important;
     left: 50%;
     bottom: 15% !important;
@@ -123,7 +123,29 @@
         }
       }
       img {
-        max-height: 10em;
+        height: 7.5em;
+        @media screen and (min-width: 576px) {
+          height: 10em;
+        }
+      }
+    }
+  }
+  .custom-checkbox {
+    height: 1.5em;
+    width: 1.5em;
+    input {
+      height: 1.5em;
+      width: 1.5em;
+      cursor: pointer;
+    }
+  }
+}
+
+.delete-avenue-card-container {
+  .card {
+    img {
+      @media screen and (min-width: 576px) {
+        max-height: 8em;
       }
     }
   }

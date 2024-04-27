@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 
 /**
- * Custom hook for sending data to an API.
- * Supports POST, PUT, and DELETE operations, especially for user profiles.
- *
+ * Custom hook for POST, PUT, and DELETE operations to an API.
  * @param {string} url - The endpoint URL for the API.
+ * @param {string} method - Request operation, like GET, POST, PUT or DELETE.
+ * @param {object} data - Object data.
  */
 function useManageUser(url) {
   const sendRequest = useCallback(
@@ -24,14 +24,14 @@ function useManageUser(url) {
       try {
         const response = await fetch(url, config);
         if (!response.ok) {
-          const error = new Error(`HTTP error! status: ${response.status}`);
-          error.status = response.status;
-          const responseBody = await response.json();
-          error.responseBody = responseBody;
+          const error = response;
+          console.log(error);
           throw error;
+        } else {
+          return await response.json();
         }
-        return await response.json();
       } catch (error) {
+        console.log(error);
         console.error("API error:", error);
         throw error;
       }

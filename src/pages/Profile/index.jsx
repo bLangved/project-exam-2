@@ -14,6 +14,8 @@ function Profile() {
   const [bookingData, setBookingData] = useState(null);
   const [modalShow, setModalShow] = useState(false);
   const [editType, setEditType] = useState(null);
+  const [avatarError, setAvatarError] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
 
   const userId = JSON.parse(localStorage.getItem("userName"));
   const profileUrl = `${API_BASE_URL}profiles/${userId}/`;
@@ -37,13 +39,21 @@ function Profile() {
     fetchData();
   }
 
+  const onAvatarError = () => {
+    setAvatarError(true);
+  };
+
+  const onBannerError = () => {
+    setBannerError(true);
+  };
+
   // Profile data
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const data = await sendProfileRequest("GET");
         setUserData(data);
-        console.log("Profile Data:", data);
+        // console.log("Profile Data:", data);
       } catch (error) {
         console.error("Failed to fetch profile data:", error);
       }
@@ -58,7 +68,7 @@ function Profile() {
       try {
         const data = await sendVenuesRequest("GET");
         setVenueData(data);
-        console.log("Venue Data:", data);
+        // console.log("Venue Data:", data);
       } catch (error) {
         console.error("Failed to fetch venue data:", error);
       }
@@ -73,7 +83,7 @@ function Profile() {
       try {
         const data = await sendBookingsRequest("GET");
         setBookingData(data);
-        console.log("Booking Data:", data);
+        // console.log("Booking Data:", data);
       } catch (error) {
         console.error("Failed to fetch booking data:", error);
       }
@@ -91,9 +101,9 @@ function Profile() {
     bio = "",
     name: apiName = "Username",
   } = userData.data;
-  const bannerUrl = banner.url || "/images/banner-placeholder.jpg";
+  const bannerUrl = banner.url;
   const bannerAlt = banner.alt || "Profile banner";
-  const avatarUrl = avatar.url || "/images/placeholder.jpg";
+  const avatarUrl = avatar.url;
   const avatarAlt = avatar.alt || "Profile image";
   const userName = capitalizeWords(replaceSpecialCharacters(apiName));
 
@@ -131,16 +141,18 @@ function Profile() {
     <article className="profile">
       <div className="profile-banner">
         <Image
-          src={bannerUrl}
+          src={bannerError ? "/images/banner-placeholder.jpg" : bannerUrl}
           alt={bannerAlt}
+          onError={onBannerError}
           fluid
           onClick={handleBannerClick}
         />
       </div>
       <div className="profile-avatar mx-auto position-relative border border-primary-subtle border-4 rounded-circle shadow">
         <Image
-          src={avatarUrl}
+          src={avatarError ? "/images/placeholder.jpg" : avatarUrl}
           alt={avatarAlt}
+          onError={onAvatarError}
           roundedCircle
           className="object-fit-cover h-100"
           onClick={handleAvatarClick}
