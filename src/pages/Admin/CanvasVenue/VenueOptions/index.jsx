@@ -4,6 +4,7 @@ import VenueEdit from "./VenueEdit";
 import VenueDelete from "./VenueDelete";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { formatDate, daysSince } from "../../../../utilities/FormatDate";
 
 function VenueOptions({
   handleClose,
@@ -19,7 +20,7 @@ function VenueOptions({
     <>
       {!isEditing ? (
         <>
-          <article className="card bg-secondary-subtle border-0 mb-4">
+          <article className="card bg-secondary-subtle border-0 mb-2">
             <div className="row g-0">
               <div className="col-4 col-sm-3">
                 <img
@@ -52,6 +53,15 @@ function VenueOptions({
               </div>
             </div>
           </article>
+          <div className="mb-4">
+            <div className="fs-6 mb-2">
+              Created: {formatDate(venue.created)} ({daysSince(venue.created)}{" "}
+              days ago)
+            </div>
+            <div className="fs-6">
+              You have {venue._count.bookings} bookings on this venue
+            </div>
+          </div>
           <VenueSee venueId={venue.id} />
           <button
             onClick={toggleEdit}
@@ -74,7 +84,7 @@ function VenueOptions({
       ) : (
         <VenueEdit
           toggleEdit={toggleEdit}
-          venueId={venue.id}
+          handleClose={handleClose}
           venue={venue}
           onVenueEdit={onVenueEdit}
           handleSubmissionResult={handleSubmissionResult}

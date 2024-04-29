@@ -16,7 +16,7 @@ function Cards() {
   };
 
   return (
-    <section className="card-container container-fluid">
+    <section className="card-container container-fluid my-3">
       <div className="row g-4">
         {data.map((venue) => {
           return (

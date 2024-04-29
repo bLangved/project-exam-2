@@ -3,9 +3,9 @@ import Cards from "./Cards";
 
 function Home() {
   return (
-    <React.Fragment>
+    <>
       <Cards />
-    </React.Fragment>
+    </>
   );
 }
 

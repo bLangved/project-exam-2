@@ -11,7 +11,6 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 function VenueEdit({
   toggleEdit,
   handleClose,
-  venueId,
   venue,
   onVenueEdit,
   handleSubmissionResult,
@@ -23,7 +22,7 @@ function VenueEdit({
   const [address, setAddress] = useState(venue.location.address);
   const [zip, setZip] = useState(venue.location.zip);
   const [city, setCity] = useState(venue.location.city);
-  const [imageUrls, setImageUrls] = useState([""]);
+  const [imageUrls, setImageUrls] = useState(venue.media.map((img) => img.url));
   const [country, setCountry] = useState(venue.location.country);
   const [continent, setContinent] = useState(venue.location.continent);
   const [wifi, setWifi] = useState(venue.meta.wifi);
@@ -112,7 +111,7 @@ function VenueEdit({
     }
   }, [country]);
 
-  const { sendRequest } = useManageUser(`${API_BASE_URL}venues/${venueId}`);
+  const { sendRequest } = useManageUser(`${API_BASE_URL}venues/${venue.id}`);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -147,14 +146,14 @@ function VenueEdit({
       const data = await sendRequest("PUT", venueData);
       onVenueEdit(data);
       handleClose();
-      handleSubmissionResult(true, "Success", "Venue successfully created!");
+      handleSubmissionResult(true, "Success", "Venue successfully edited!");
     } catch (error) {
       console.log(error);
       setErrorMessage(error.status || "Unknown error occurred");
       handleSubmissionResult(
         false,
         "Error",
-        "There was an error in creating the Venue"
+        "There was an error in editing the Venue"
       );
     }
   };

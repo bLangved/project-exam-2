@@ -32,7 +32,7 @@ function Header() {
   const isSignedIn = userName.length > 0;
 
   return (
-    <header className="banner bg-body-tertiary">
+    <header className="banner bg-body-tertiary border-bottom shadow-sm">
       <Mobile handleShow={handleShow} />
       <Desktop handleShow={handleShow} />
 

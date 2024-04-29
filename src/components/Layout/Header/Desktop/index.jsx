@@ -3,15 +3,20 @@ import Navbar from "react-bootstrap/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Desktop({ handleShow }) {
+  const navigate = useNavigate();
   const searchInputRef = useRef(null);
 
   const handleSearchIconClick = () => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
+  };
+
+  const handleWishlistIconClick = () => {
+    navigate("/wishlist");
   };
 
   return (
@@ -46,8 +51,18 @@ function Desktop({ handleShow }) {
         </div>
       </div>
       <ul className="icon-tabs d-flex justify-content-between my-auto mx-3 p-0">
-        <FontAwesomeIcon icon={faHeart} size="2xl" onClick={handleShow} />
-        <FontAwesomeIcon icon={faCircleUser} size="2xl" onClick={handleShow} />
+        <FontAwesomeIcon
+          icon={faHeart}
+          size="2xl"
+          onClick={handleWishlistIconClick}
+          color="deeppink"
+        />
+        <FontAwesomeIcon
+          icon={faCircleUser}
+          size="2xl"
+          onClick={handleShow}
+          color="#0d6efd"
+        />
       </ul>
     </Navbar>
   );
