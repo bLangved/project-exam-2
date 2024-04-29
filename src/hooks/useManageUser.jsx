@@ -21,12 +21,19 @@ function useManageUser(url) {
         body: data ? JSON.stringify(data) : null,
       };
 
+      // body: method !== 'GET' ? JSON.stringify(data) : null,
+      // if (method === 'GET') {
+      //   delete config.body; // GET requests typically don't have a body
+      // }
+
       try {
         const response = await fetch(url, config);
         if (!response.ok) {
           const error = response;
           console.log(error);
           throw error;
+        } else if (response.status === 204) {
+          return response.status;
         } else {
           return await response.json();
         }

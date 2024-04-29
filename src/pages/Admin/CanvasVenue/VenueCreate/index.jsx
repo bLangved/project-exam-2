@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Form, Row, Col, Button, Image, Alert } from "react-bootstrap/";
 import { countries, continents } from "countries-list";
-import ModalImage from "../../../Modals/ModalImage";
+import ModalImage from "../../../../components/Modals/ModalImage";
 import { sortedCountries } from "../../../../utilities/SortedLocations";
 import useManageUser from "../../../../hooks/useManageUser";
 import { API_BASE_URL } from "../../../../constants/apiUrls";
 
-function VenueCreate({ handleClose, handleSubmissionResult }) {
+function VenueCreate({ handleClose, handleSubmissionResult, onVenueCreate }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [guests, setGuests] = useState("");
@@ -136,6 +136,7 @@ function VenueCreate({ handleClose, handleSubmissionResult }) {
 
     try {
       const data = await sendRequest("POST", venueData);
+      onVenueCreate(data);
       handleClose();
       handleSubmissionResult(true, "Success", "Venue successfully created!");
     } catch (error) {
