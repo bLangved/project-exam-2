@@ -8,6 +8,7 @@
     * {
       font-size: 1rem;
     }
+    cursor: pointer;
     img {
       height: 16em;
       object-fit: cover;
@@ -161,10 +162,11 @@
 
 // Search queries
 .search-queries-container {
-  // height: 50vh !important;
+  transition: transform 0.4s ease, height 0.4s ease !important;
 
   .card-container {
     .card {
+      cursor: pointer;
       .card-image {
         height: 6em !important;
       }

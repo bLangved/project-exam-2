@@ -1,59 +1,101 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Offcanvas, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUpRightAndDownLeftFromCenter,
   faDownLeftAndUpRightToCenter,
 } from "@fortawesome/free-solid-svg-icons";
+import Spinner from "react-bootstrap/Spinner";
+import { useNavigate } from "react-router-dom";
 
-const SearchResults = ({ show, onHide, venues }) => {
+const SearchResults = ({ show, onHide, venues, isLoading }) => {
+  const navigate = useNavigate();
   const newVenues = venues?.data || [];
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [height, setHeight] = useState("");
 
-  const [height, setHeight] = useState("75vh");
-  const [zIndex, setZIndex] = useState("2");
-
-  const increaseHeight = () => {
-    setHeight("75vh");
-    setZIndex("2");
+  const toggleHeight = () => {
+    setIsExpanded(!isExpanded);
   };
 
-  const reduceHeight = () => {
-    setHeight("8.15em");
-    setZIndex("2");
-  };
+  useEffect(() => {
+    if (isLoading) {
+      setHeight("75vh");
+      setIsExpanded(true);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    setHeight(isExpanded ? "75vh" : "8.15em");
+  }, [isExpanded, show]);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      const isDesktop = window.matchMedia("(min-width: 992px)").matches;
+
+      let newHeight;
+      if (isExpanded) {
+        newHeight = isDesktop ? "65vh" : "75vh";
+      } else {
+        newHeight = isDesktop ? "4em" : "8.15em";
+      }
+
+      setHeight(newHeight);
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [isExpanded, show]);
+
+  const currentIcon = isExpanded
+    ? faDownLeftAndUpRightToCenter
+    : faUpRightAndDownLeftFromCenter;
 
   return (
     <Offcanvas
-      className="search-queries-container shadow-lg"
+      className="search-queries-container shadow-lg z-1"
       show={show}
       onHide={onHide}
       placement="bottom"
       backdrop={false}
       scroll={true}
-      style={{ height, zIndex, transition: "height 0.4s ease" }}
+      style={{
+        height: height,
+      }}
     >
-      <Offcanvas.Header className="bg-body-tertiary" closeButton>
-        <Offcanvas.Title>Search Results</Offcanvas.Title>
-        <div className=" d-flex align-items-center justify-content-between w-25 mx-auto">
-          <FontAwesomeIcon
-            icon={faDownLeftAndUpRightToCenter}
-            size="lg"
-            onClick={reduceHeight}
-          />
-          <FontAwesomeIcon
-            icon={faUpRightAndDownLeftFromCenter}
-            size="lg"
-            onClick={increaseHeight}
-          />
-        </div>
+      <Offcanvas.Header
+        className="bg-body-tertiary shadow-sm border-bottom"
+        closeButton
+      >
+        <Offcanvas.Title>Results</Offcanvas.Title>
+        <FontAwesomeIcon
+          className="mx-auto w-50"
+          icon={currentIcon}
+          size="xl"
+          onClick={toggleHeight}
+        />
       </Offcanvas.Header>
       <Offcanvas.Body>
-        {newVenues.length > 0 ? (
+        {isLoading ? (
+          <div className="d-flex w-100 h-100">
+            <Spinner
+              animation="border"
+              variant="primary"
+              className="m-auto z-3"
+              role="status"
+            ></Spinner>
+          </div>
+        ) : newVenues.length > 0 ? (
           <ListGroup className="card-container">
             {newVenues.map((venue) => (
               <ListGroup.Item
                 key={venue.id}
                 className="card bg-body-tertiary mb-2 p-0 shadow-sm"
+                onClick={() => navigate(`/venue/${venue.id}`)}
               >
                 <div className="row g-0">
                   <div className="col-4 col-sm-3">

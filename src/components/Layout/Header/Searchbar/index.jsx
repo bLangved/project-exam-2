@@ -9,20 +9,23 @@ import debounce from "../../../../utilities/debounce";
 const Searchbar = forwardRef((props, ref) => {
   const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { fetchData } = useFetchSearchQueries(`${API_BASE_URL}venues/search?`);
 
   const handleSearchInputChange = debounce(async () => {
+    setLoading(true);
     const query = ref.current?.value;
     if (query && query.length > 0) {
       const data = await fetchData(query);
       setVenues(data);
       setShowOffcanvas(true);
+      setLoading(false);
     }
-  }, 500); // Debounce time of 500ms
+  }, 500);
 
   const handleSearchIconClick = () => {
     ref.current?.focus();
-    handleSearchInputChange(); // Manually trigger the search when icon clicked
+    handleSearchInputChange();
   };
   return (
     <>
@@ -52,6 +55,7 @@ const Searchbar = forwardRef((props, ref) => {
         show={showOffcanvas}
         onHide={() => setShowOffcanvas(false)}
         venues={venues}
+        isLoading={loading}
       />
     </>
   );
