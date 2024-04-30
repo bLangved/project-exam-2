@@ -2,21 +2,20 @@ import React, { useRef } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser, faHeart } from "@fortawesome/free-regular-svg-icons";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
+import Searchbar from "../Searchbar";
 
 function Desktop({ handleShow }) {
   const navigate = useNavigate();
   const searchInputRef = useRef(null);
 
-  const handleSearchIconClick = () => {
+  const handleWishlistIconClick = () => {
+    navigate("/wishlist");
+  };
+  const focusSearchInput = () => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  };
-
-  const handleWishlistIconClick = () => {
-    navigate("/wishlist");
   };
 
   return (
@@ -29,27 +28,7 @@ function Desktop({ handleShow }) {
           className="mx-3"
         />
       </Link>
-      <div className="input-group">
-        <div className="form-floating d-flex position-relative">
-          <input
-            type="text"
-            className="form-control rounded-pill ps-4"
-            id="searchbarInput"
-            ref={searchInputRef}
-            placeholder="Search for venues"
-          />
-          <label className="text-muted ps-4" htmlFor="searchbarInput">
-            Search for venues
-          </label>
-          <button className="btn btn-white pe-4 h-100 end-0 rounded-pill border-0 position-absolute">
-            <FontAwesomeIcon
-              icon={faMagnifyingGlass}
-              size="lg"
-              onClick={handleSearchIconClick}
-            />
-          </button>
-        </div>
-      </div>
+      <Searchbar ref={searchInputRef} />
       <ul className="icon-tabs d-flex justify-content-between my-auto mx-3 p-0">
         <FontAwesomeIcon
           icon={faHeart}

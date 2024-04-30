@@ -158,3 +158,23 @@
     }
   }
 }
+
+// Search queries
+.search-queries-container {
+  // height: 50vh !important;
+
+  .card-container {
+    .card {
+      .card-image {
+        height: 6em !important;
+      }
+    }
+
+    .card-rating {
+      img {
+        width: 1em;
+        height: 1em;
+      }
+    }
+  }
+}
