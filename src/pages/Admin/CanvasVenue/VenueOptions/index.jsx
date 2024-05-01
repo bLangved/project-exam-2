@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import VenueSee from "./VenueSee";
 import VenueEdit from "./VenueEdit";
 import VenueDelete from "./VenueDelete";
+import VenueBookings from "./VenueBookings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faList } from "@fortawesome/free-solid-svg-icons";
 import { formatDate, daysSince } from "../../../../utilities/FormatDate";
 
 function VenueOptions({
@@ -11,14 +12,18 @@ function VenueOptions({
   venue,
   onVenueDelete,
   onVenueEdit,
+  onVenueBooking,
   handleSubmissionResult,
+  isloading,
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
 
   const toggleEdit = () => setIsEditing(!isEditing);
+  const toggleBooking = () => setIsBooking(!isBooking);
   return (
     <>
-      {!isEditing ? (
+      {!isEditing && !isBooking ? (
         <>
           <article className="card bg-secondary-subtle border-0 mb-2">
             <div className="row g-0">
@@ -62,6 +67,13 @@ function VenueOptions({
               You have {venue._count.bookings} bookings on this venue
             </div>
           </div>
+          <button
+            onClick={toggleBooking}
+            className="btn btn-light w-100 p-3 mb-4 d-flex gap-3 align-items-center"
+          >
+            <FontAwesomeIcon icon={faList} size="lg" className="text-dark" />
+            <span>Manage bookings</span>
+          </button>
           <VenueSee venueId={venue.id} />
           <button
             onClick={toggleEdit}
@@ -81,13 +93,21 @@ function VenueOptions({
             handleClose={handleClose}
           />
         </>
-      ) : (
+      ) : isEditing ? (
         <VenueEdit
           toggleEdit={toggleEdit}
           handleClose={handleClose}
           venue={venue}
           onVenueEdit={onVenueEdit}
           handleSubmissionResult={handleSubmissionResult}
+        />
+      ) : (
+        <VenueBookings
+          toggleBooking={toggleBooking}
+          handleClose={handleClose}
+          venue={venue}
+          onVenueBooking={onVenueBooking}
+          isloading={isloading}
         />
       )}
     </>

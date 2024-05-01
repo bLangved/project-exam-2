@@ -13,3 +13,11 @@ export function daysSince(dateString) {
   const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
   return daysDiff;
 }
+
+export function totalDays(firstDate, lastDate) {
+  const start = new Date(firstDate);
+  const end = new Date(lastDate);
+  const timeDiff = end - start;
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  return daysDiff;
+}

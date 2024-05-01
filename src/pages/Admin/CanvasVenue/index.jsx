@@ -12,6 +12,7 @@ function CanvasVenue({
   onVenueCreate,
   onVenueDelete,
   onVenueEdit,
+  isloading,
 }) {
   const [placement, setPlacement] = useState("start");
   const [modalShow, setModalShow] = useState(false);
@@ -69,6 +70,7 @@ function CanvasVenue({
               handleSubmissionResult={handleSubmissionResult}
               onVenueDelete={onVenueDelete}
               onVenueEdit={onVenueEdit}
+              isloading={isloading}
             />
           )}
         </Offcanvas.Body>

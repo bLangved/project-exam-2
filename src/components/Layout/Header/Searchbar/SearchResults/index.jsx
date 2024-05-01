@@ -95,7 +95,10 @@ const SearchResults = ({ show, onHide, venues, isLoading }) => {
               <ListGroup.Item
                 key={venue.id}
                 className="card bg-body-tertiary mb-2 p-0 shadow-sm"
-                onClick={() => navigate(`/venue/${venue.id}`)}
+                onClick={() => {
+                  navigate(`/venue/${venue.id}`);
+                  toggleHeight();
+                }}
               >
                 <div className="row g-0">
                   <div className="col-4 col-sm-3">

@@ -11,10 +11,12 @@ function Admin() {
   const [action, setAction] = useState("");
   const [venues, setVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState(null);
-
+  const [loading, setLoading] = useState(false);
+  const includeBookings = true;
+  const includeOwner = true;
   const userName = JSON.parse(localStorage.getItem("userName"));
   const { sendRequest } = useManageUser(
-    `${API_BASE_URL}profiles/${userName}/venues/`
+    `${API_BASE_URL}profiles/${userName}/venues/?_bookings=${includeBookings}&_owner=${includeOwner}`
   );
 
   const handleShow = (actionType, venue) => {
@@ -42,10 +44,13 @@ function Admin() {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
+        setLoading(true);
         const response = await sendRequest("GET");
         setVenues(response.data);
+        setLoading(false);
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     };
 
@@ -73,6 +78,7 @@ function Admin() {
         onVenueCreate={handleVenueCreate}
         onVenueDelete={handleVenueDelete}
         onVenueEdit={handleVenueEdit}
+        isLoading={loading}
       />
     </div>
   );
