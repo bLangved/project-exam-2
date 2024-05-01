@@ -149,13 +149,12 @@
   }
 }
 
-.delete-avenue-card-container {
+.avenue-card-container {
   .card {
     cursor: pointer;
+    height: 8.5em !important;
     img {
-      @media screen and (min-width: 576px) {
-        max-height: 8em;
-      }
+      height: 8.5em !important;
     }
   }
 }

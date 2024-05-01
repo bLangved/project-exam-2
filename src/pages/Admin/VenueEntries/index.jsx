@@ -3,7 +3,7 @@ import React from "react";
 function VenueEntries({ handleShow, venues }) {
   return (
     <>
-      <section className="delete-avenue-card-container">
+      <section className="avenue-card-container">
         {venues.map((venue, index) => (
           <article
             className="card bg-secondary-subtle border-0 mb-3"
@@ -11,14 +11,14 @@ function VenueEntries({ handleShow, venues }) {
             onClick={() => handleShow("Options", venue)}
           >
             <div className="row g-0">
-              <div className="col-4 col-sm-3">
+              <div className="col-3">
                 <img
                   className="img-fluid h-100 rounded-start"
                   src={venue.media[0]?.url || "/images/placeholder.jpg"}
                   alt={venue.media[0]?.alt || "Venue main image"}
                 />
               </div>
-              <div className="col-8 col-sm-9">
+              <div className="col-9">
                 <div className="card-body h-100 p-2 d-flex flex-column ">
                   <div>
                     <h2 className="fs-5">{venue.name}</h2>
