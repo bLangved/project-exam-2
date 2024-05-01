@@ -6,6 +6,7 @@ import { useCallback } from "react";
  * @param {string} method - Request operation, like GET, POST, PUT or DELETE.
  * @param {object} data - Object data.
  */
+console.log("API Key:", import.meta.env.VITE_API_KEY);
 function useManageUser(url) {
   const sendRequest = useCallback(
     async (method, data = null) => {
