@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../constants/apiUrls";
 import useApi from "../../hooks/useApi";
 import StarRating from "../../components/StarRating";
@@ -11,11 +11,14 @@ import {
   faUtensils,
   faCar,
   faCircleUser,
+  faArrowLeft,
+  faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import BookingDesktop from "./BookingDesktop";
 import BookingMobile from "./BookingMobile";
 
 function Venue() {
+  const navigate = useNavigate();
   let { id } = useParams();
   const endpoint = "venues/";
   const result = useApi(`${API_BASE_URL}${endpoint}${id}`);
@@ -54,8 +57,20 @@ function Venue() {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  function goBack() {
+    navigate(-1);
+  }
+
   return (
     <article className="venue">
+      <div className="m-3 d-flex">
+        <button className="btn outline-dark" onClick={goBack}>
+          <FontAwesomeIcon icon={faArrowLeft} size="xl" />
+        </button>
+        <button className="btn outline-dark ms-auto ">
+          <FontAwesomeIcon icon={faHeart} size="xl" />
+        </button>
+      </div>
       <ImageCarousel images={images} />
       <div className="row w-100">
         <div className="col-lg-8">
