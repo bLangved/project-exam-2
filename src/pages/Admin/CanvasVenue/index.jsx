@@ -21,16 +21,10 @@ function CanvasVenue({
 
   useEffect(() => {
     const updatePlacement = () => {
-      if (window.innerWidth < 992) {
-        setPlacement("bottom");
-      } else {
-        setPlacement("start");
-      }
+      setPlacement(window.innerWidth < 992 ? "bottom" : "start");
     };
-
     window.addEventListener("resize", updatePlacement);
     updatePlacement();
-
     return () => window.removeEventListener("resize", updatePlacement);
   }, []);
 
