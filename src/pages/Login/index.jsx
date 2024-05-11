@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Container,
   Row,
@@ -15,6 +15,7 @@ import useRegisterLogin from "../../hooks/useRegisterLogin";
 import { API_AUTH_ENDPOINT } from "../../constants/apiUrls";
 import ModalCentered from "../../components/Modals/ModalCentered";
 import { useNavigate } from "react-router-dom";
+import { UserProfileContext } from "../../contexts/ProfileDataContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ const Login = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [password, setPassword] = useState("");
   const [passwordValid, setPasswordValid] = useState(true);
+
+  const { setUserData } = useContext(UserProfileContext);
 
   const handleEmailChange = (e) => {
     const input = e.target.value;
@@ -64,6 +67,7 @@ const Login = () => {
         setLoaderShow(true);
         const data = await sendRequest("POST", userData);
         if (data) {
+          setUserData(data.data);
           localStorage.setItem("userName", JSON.stringify(data.data.name));
           localStorage.setItem("userEmail", JSON.stringify(data.data.email));
           localStorage.setItem("userBio", JSON.stringify(data.data.bio));

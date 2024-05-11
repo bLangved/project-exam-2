@@ -5,6 +5,7 @@ import "./scss/index.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Layout } from "./components/";
 import { VenueDataProvider } from "./contexts/VenueDataContext";
+import { UserProfileProvider } from "./contexts/ProfileDataContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   Home,
@@ -23,27 +24,29 @@ import {
 
 function App() {
   return (
-    <VenueDataProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="venue/:id" element={<Venue />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="venue_create" element={<VenueCreate />} />
-            <Route path="venue_edit" element={<VenueEdit />} />
-            <Route path="admin" element={<Admin />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="checkoutSuccess" element={<CheckoutSuccess />} />
-            <Route path="*" element={<RouteNotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </VenueDataProvider>
+    <UserProfileProvider>
+      <VenueDataProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="venue/:id" element={<Venue />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="venue_create" element={<VenueCreate />} />
+              <Route path="venue_edit" element={<VenueEdit />} />
+              <Route path="admin" element={<Admin />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="checkoutSuccess" element={<CheckoutSuccess />} />
+              <Route path="*" element={<RouteNotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </VenueDataProvider>
+    </UserProfileProvider>
   );
 }
 

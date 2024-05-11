@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../constants/apiUrls";
 import useApi from "../../hooks/useApi";
-import StarRating from "../../components/StarRating";
 import ImageCarousel from "../../components/ImageCarousel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,14 +9,17 @@ import {
   faPaw,
   faUtensils,
   faCar,
-  faCircleUser,
   faArrowLeft,
   faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import BookingDesktop from "./BookingDesktop";
 import BookingMobile from "./BookingMobile";
-import { Offcanvas } from "react-bootstrap";
+import { Offcanvas, Image } from "react-bootstrap";
 import ModalImage from "../../components/Modals/ModalImage";
+import {
+  capitalizeWords,
+  replaceSpecialCharacters,
+} from "../../utilities/TextHandling";
 
 function Venue() {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -26,9 +28,12 @@ function Venue() {
   const [activeImageUrl, setActiveImageUrl] = useState("");
 
   const navigate = useNavigate();
+
   let { id } = useParams();
-  const result = useApi(`${API_BASE_URL}venues/${id}`);
+  const result = useApi(`${API_BASE_URL}venues/${id}?_owner=true`);
   const data = result.data[0];
+
+  console.log(data);
 
   useEffect(() => {
     const updatePlacement = () => {
@@ -71,7 +76,7 @@ function Venue() {
         const Icon = offerIcons[key];
         return (
           <li key={key} className="mb-4">
-            <FontAwesomeIcon icon={Icon} size="2xl" />{" "}
+            <FontAwesomeIcon icon={Icon} size="xl" />{" "}
             <span className="fs-5">{capitalizeFirstLetter(key)}</span>
           </li>
         );
@@ -103,25 +108,43 @@ function Venue() {
         <div className="row w-100">
           <div className="col-lg-8">
             <section className="venue-text px-3">
-              <h1 className="my-3">{data.name}</h1>
-              <p>{data.location.address}</p>
-              <p>{data.location.city}</p>
-              <h2 className="mb-3">Rating</h2>
-              <div className="star-rating mb-3">
-                <StarRating rating={data.rating} />
-              </div>
-              <h2 className="mb-3">Description</h2>
-              <p className="lead">{data.description}</p>
+              <h1 className="fs-3 my-3">{data.name}</h1>
+              {/* <p>{data.location.address}</p>
+              <p>{data.location.city}</p> */}
+              <h2 className="fs-4 mb-3">Rating</h2>
+
+              {data.rating > 0 ? (
+                <div className="card-rating d-flex align-items-center gap-1 mb-3">
+                  <img src="/icons/star.svg" alt="star rating" />
+                  <span>{data.rating}</span>
+                </div>
+              ) : (
+                <div className="card-rating d-flex align-items-center gap-1 mb-3">
+                  {/* <img src="/icons/star.svg" alt="star rating" /> */}
+                  <span className="text-secondary">
+                    No rating yet for this venue
+                  </span>
+                </div>
+              )}
+
+              <h2 className="fs-4 mb-3">Description</h2>
+              <p className="fs-6 lead">{data.description}</p>
               <hr />
-              <div className="d-flex align-items-center p-2 ps-0">
-                <FontAwesomeIcon icon={faCircleUser} size="2xl" />
+              <div className="host-container d-flex align-items-center p-2 ps-0">
+                <Image src={data.owner.avatar.url} roundedCircle />
                 <div className="ms-2">
-                  <span>Username</span>
+                  <span>
+                    {capitalizeWords(replaceSpecialCharacters(data.owner.name))}
+                  </span>
                   <span className="ms-1">is your host</span>
+                  <div className="mt-2">
+                    <span>Email: </span>
+                    <span>{data.owner.email}</span>
+                  </div>
                 </div>
               </div>
               <hr />
-              <h2 className="mb-3">This place offers</h2>
+              <h2 className="fs-3 mb-3">This place offers</h2>
               <ul className="offers">{renderOfferItems()}</ul>
               <hr />
             </section>
