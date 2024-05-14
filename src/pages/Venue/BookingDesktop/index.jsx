@@ -1,13 +1,17 @@
 import React from "react";
 import DateRangePicker from "../../../components/DateRangePicker";
 
-function BookingDesktop() {
+function BookingDesktop({ venue, onDateChange, startDate, endDate }) {
   return (
-    <section className="booking-desktop position-relative d-none d-lg-block col-lg-4 mb-3">
+    <section className="booking-desktop position-relative d-none d-lg-block col-lg-4 mb-3 pe-0">
       <div className="booking-desktop-content position-sticky bg-body-tertiary text-dark rounded-3 shadow">
         <div className="w-100 d-flex flex-column p-3">
-          <span className="fs-5 fw-bolder">Choose your dates</span>
-          <DateRangePicker />
+          <DateRangePicker
+            venue={venue}
+            onDateChange={onDateChange}
+            startDate={startDate}
+            endDate={endDate}
+          />
         </div>
       </div>
     </section>

@@ -104,11 +104,12 @@
       max-width: 12em;
     }
   }
-  .booking-desktop-content {
-    top: 20em;
-
-    button {
-      height: 3em;
+  .booking-desktop {
+    .booking-desktop-content {
+      top: 12.5em;
+      button {
+        height: 3em;
+      }
     }
   }
 }

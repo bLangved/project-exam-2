@@ -1,26 +1,58 @@
 import React, { useState } from "react";
 import { format, parseISO, differenceInDays } from "date-fns";
+import Calendar from "./Calendar";
+import useManageUser from "../../hooks/useManageUser";
+import { API_BASE_URL } from "../../constants/apiUrls";
 
-const DateRangePicker = ({ onDateChange, handleClose }) => {
-  const [startDate, setStartDate] = useState(
-    () => sessionStorage.getItem("startDate") || ""
-  );
-  const [endDate, setEndDate] = useState(
-    () => sessionStorage.getItem("endDate") || ""
-  );
+const DateRangePicker = ({
+  venue,
+  onDateChange,
+  handleClose,
+  startDate,
+  endDate,
+}) => {
+  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
+  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [priceChange, setPriceChange] = useState(null);
+  const [guests, setGuests] = useState(1);
 
-  const handleStartDateChange = (e) => {
-    const newStartDate = e.target.value;
-    sessionStorage.setItem("startDate", newStartDate);
-    setStartDate(newStartDate);
-    onDateChange(newStartDate, endDate);
+  const handleDateSelection = (startDate, endDate) => {
+    setSelectedStartDate(startDate);
+    setSelectedEndDate(endDate);
+    onDateChange(startDate, endDate);
+    calculateTotalPrice(startDate, endDate);
   };
 
-  const handleEndDateChange = (e) => {
-    const newEndDate = e.target.value;
-    sessionStorage.setItem("endDate", newEndDate);
-    setEndDate(newEndDate);
-    onDateChange(startDate, newEndDate);
+  const calculateTotalPrice = (startDate, endDate) => {
+    if (startDate && endDate) {
+      const days = differenceInDays(parseISO(endDate), parseISO(startDate)) + 1;
+      const price = venue.price * days;
+      setPriceChange(price);
+    } else {
+      setPriceChange(null);
+    }
+  };
+
+  const { sendRequest } = useManageUser(`${API_BASE_URL}bookings/`);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (selectedStartDate && selectedEndDate) {
+      const bookingData = {
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+        guests: guests,
+        venueId: venue.id,
+      };
+      try {
+        const data = await sendRequest("POST", bookingData);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("Please select both start and end dates.");
+    }
   };
 
   const formatDate = (dateString) => {
@@ -30,73 +62,60 @@ const DateRangePicker = ({ onDateChange, handleClose }) => {
     return "";
   };
 
-  const getDaysDifference = (start, end) => {
-    if (start && end) {
-      const startParsed = parseISO(start);
-      const endParsed = parseISO(end);
-      return differenceInDays(endParsed, startParsed);
-    }
-    return 0;
-  };
-
   return (
     <div className="my-3">
       <div className="d-flex my-2 fw-semibold">
-        {startDate || endDate ? (
-          <div>
-            <span className="fs-4 ">
-              {getDaysDifference(startDate, endDate)} days
-            </span>
+        {selectedStartDate ? (
+          selectedEndDate ? (
             <div>
-              <span>{formatDate(startDate)}</span>
-              <span className="mx-1">-</span>
-              <span>{formatDate(endDate)}</span>
+              <span className="fs-4 ">
+                {differenceInDays(
+                  parseISO(selectedEndDate),
+                  parseISO(selectedStartDate)
+                )}{" "}
+                days
+              </span>
+              <div>
+                <span>{formatDate(selectedStartDate)}</span>
+                <span className="mx-1">-</span>
+                <span>{formatDate(selectedEndDate)}</span>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div>
+              <span>{formatDate(selectedStartDate)}</span>
+              <span className="mx-1">-</span>
+            </div>
+          )
         ) : (
-          <span>Enter a date</span>
+          <span className="fs-5 fw-semibold">Choose your dates</span>
         )}
       </div>
-      <form className="d-flex flex-column">
-        <div className="form-group pe-lg-1 mb-4">
-          <label htmlFor="start-date">Start Date</label>
-          <input
-            type="date"
-            className="form-control"
-            id="start-date"
-            value={startDate}
-            onChange={handleStartDateChange}
-          />
-        </div>
-        <div className="form-group pe-lg-1 mb-4">
-          <label htmlFor="end-date">End Date</label>
-          <input
-            type="date"
-            className="form-control"
-            id="end-date"
-            value={endDate}
-            onChange={handleEndDateChange}
-          />
-        </div>
-        <button
-          type="submit"
-          className="btn btn-primary mt-3 d-none d-lg-block"
-        >
-          Book avenue
-        </button>
-      </form>
+      <Calendar
+        bookings={venue.bookings}
+        onDateChange={handleDateSelection}
+        onPriceChange={priceChange}
+        maxGuests={venue.maxGuests}
+        guests={guests}
+        setGuests={setGuests}
+      />
+      <hr className="d-lg-none" />
       <button
-        type="submit"
-        className="btn btn-primary w-100 mt-3 d-lg-none"
+        type="button"
+        className="btn btn-secondary w-100 d-lg-none"
         onClick={handleClose}
       >
         Save
       </button>
-      <hr />
-      <div className="d-flex gap-2 fs-4">
-        <span className="fw-bolder">Total:</span>
-        <span>1099,-</span>
-      </div>
+      <hr className="d-none d-lg-block" />
+      <button
+        type="submit"
+        className="btn btn-primary w-100 mt-3 d-none d-lg-block"
+        onClick={handleSubmit}
+        disabled={!selectedStartDate || !selectedEndDate}
+      >
+        Book venue
+      </button>
     </div>
   );
 };

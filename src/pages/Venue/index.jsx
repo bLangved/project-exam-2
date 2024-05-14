@@ -11,7 +11,9 @@ import {
   faCar,
   faArrowLeft,
   faHeart,
+  faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import BookingDesktop from "./BookingDesktop";
 import BookingMobile from "./BookingMobile";
 import { Offcanvas, Image } from "react-bootstrap";
@@ -27,10 +29,20 @@ function Venue() {
   const [showModal, setShowModal] = useState(false);
   const [activeImageUrl, setActiveImageUrl] = useState("");
 
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const handleDateChange = (start, end) => {
+    setStartDate(start);
+    setEndDate(end);
+  };
+
   const navigate = useNavigate();
 
   let { id } = useParams();
-  const result = useApi(`${API_BASE_URL}venues/${id}?_owner=true`);
+  const result = useApi(
+    `${API_BASE_URL}venues/${id}?_owner=true&_bookings=true`
+  );
   const data = result.data[0];
 
   console.log(data);
@@ -105,12 +117,21 @@ function Venue() {
           </button>
         </div>
         <ImageCarousel images={images} handleShow={handleShow} />
-        <div className="row w-100">
-          <div className="col-lg-8">
-            <section className="venue-text px-3">
+        <div className="row m-0 px-3">
+          <div className="col-lg-8 p-0">
+            <section className="venue-text">
               <h1 className="fs-3 my-3">{data.name}</h1>
-              {/* <p>{data.location.address}</p>
-              <p>{data.location.city}</p> */}
+              <div className="d-flex align-items-center gap-2 mb-3 text-secondary">
+                <div>
+                  <span>{data.maxGuests} </span>
+                  <span>Guests</span>
+                </div>
+                <FontAwesomeIcon icon={faCircle} size="2xs" />
+                <div>
+                  <span>{data.price}</span>
+                  <span>,- per night</span>
+                </div>
+              </div>
               <h2 className="fs-4 mb-3">Rating</h2>
 
               {data.rating > 0 ? (
@@ -137,8 +158,8 @@ function Venue() {
                     {capitalizeWords(replaceSpecialCharacters(data.owner.name))}
                   </span>
                   <span className="ms-1">is your host</span>
-                  <div className="mt-2">
-                    <span>Email: </span>
+                  <div className="mt-2 d-flex align-items-center gap-1">
+                    <FontAwesomeIcon icon={faEnvelope} size="lg" />
                     <span>{data.owner.email}</span>
                   </div>
                 </div>
@@ -148,8 +169,8 @@ function Venue() {
               <ul className="offers">{renderOfferItems()}</ul>
               <hr />
             </section>
-            <figure className="px-3 px-md-4 mb-5 w-100">
-              <picture className="">
+            <figure className="mb-5 w-100">
+              <picture>
                 <source
                   media="(min-width:768px)"
                   srcSet="/images/map-placeholder-desktop.jpg"
@@ -164,7 +185,7 @@ function Venue() {
                   className="h-100 rounded-4"
                 />
               </picture>
-              <figcaption className="">
+              <figcaption>
                 <address className="mb-1 fw-semibold fs-4">
                   {data.location.address}
                 </address>
@@ -174,9 +195,19 @@ function Venue() {
               </figcaption>
             </figure>
           </div>
-          <BookingDesktop />
+          <BookingDesktop
+            venue={data}
+            onDateChange={handleDateChange}
+            startDate={startDate}
+            endDate={endDate}
+          />
         </div>
-        <BookingMobile />
+        <BookingMobile
+          venue={data}
+          onDateChange={handleDateChange}
+          startDate={startDate}
+          endDate={endDate}
+        />
       </article>
       <Offcanvas
         className="canvas-venue"

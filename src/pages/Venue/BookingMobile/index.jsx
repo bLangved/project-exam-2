@@ -3,19 +3,11 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import { format, parseISO, differenceInDays } from "date-fns";
 import DateRangePicker from "../../../components/DateRangePicker";
 
-function BookingMobile() {
+function BookingMobile({ venue, onDateChange, startDate, endDate }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
-  const handleDateChange = (start, end) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
 
   const getDaysDifference = (start, end) => {
     if (start && end) {
@@ -53,17 +45,21 @@ function BookingMobile() {
           </button>
         </div>
         <button className="btn btn-primary px-1 ms-auto col-5">
-          Book avenue
+          Book venue
         </button>
       </div>
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Choose your dates</Offcanvas.Title>
+          {/* <Offcanvas.Title>
+          </Offcanvas.Title> */}
         </Offcanvas.Header>
         <Offcanvas.Body>
           <DateRangePicker
-            onDateChange={handleDateChange}
+            venue={venue}
+            onDateChange={onDateChange}
             handleClose={handleClose}
+            startDate={startDate}
+            endDate={endDate}
           />
         </Offcanvas.Body>
       </Offcanvas>
