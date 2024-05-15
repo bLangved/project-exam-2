@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../constants/apiUrls";
 import useApi from "../../hooks/useApi";
@@ -28,14 +28,9 @@ function Venue() {
   const [placement, setPlacement] = useState("start");
   const [showModal, setShowModal] = useState(false);
   const [activeImageUrl, setActiveImageUrl] = useState("");
-
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  const handleDateChange = (start, end) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
+  const [venueData, setVenueData] = useState(null);
 
   const navigate = useNavigate();
 
@@ -43,9 +38,26 @@ function Venue() {
   const result = useApi(
     `${API_BASE_URL}venues/${id}?_owner=true&_bookings=true`
   );
-  const data = result.data[0];
+  const data = result.data ? result.data[0] : null;
 
-  console.log(data);
+  useEffect(() => {
+    if (data) {
+      setVenueData(data);
+      console.log(data);
+    }
+  }, [data]);
+
+  const handleBookingSuccess = (newBooking) => {
+    setVenueData((prevVenueData) => ({
+      ...prevVenueData,
+      bookings: [...prevVenueData.bookings, newBooking.data],
+    }));
+  };
+
+  const handleDateChange = (start, end) => {
+    setStartDate(start);
+    setEndDate(end);
+  };
 
   useEffect(() => {
     const updatePlacement = () => {
@@ -69,11 +81,11 @@ function Venue() {
     setShowModal(true);
   };
 
-  if (!data) {
+  if (!venueData) {
     return <div>Loading...</div>;
   }
-  const images = data.media;
-  const offers = data.meta;
+  const images = venueData.media;
+  const offers = venueData.meta;
 
   const offerIcons = {
     wifi: faWifi,
@@ -120,28 +132,27 @@ function Venue() {
         <div className="row m-0 px-3">
           <div className="col-lg-8 p-0">
             <section className="venue-text">
-              <h1 className="fs-3 my-3">{data.name}</h1>
+              <h1 className="fs-3 my-3">{venueData.name}</h1>
               <div className="d-flex align-items-center gap-2 mb-3 text-secondary">
                 <div>
-                  <span>{data.maxGuests} </span>
+                  <span>{venueData.maxGuests} </span>
                   <span>Guests</span>
                 </div>
                 <FontAwesomeIcon icon={faCircle} size="2xs" />
                 <div>
-                  <span>{data.price}</span>
+                  <span>{venueData.price}</span>
                   <span>,- per night</span>
                 </div>
               </div>
               <h2 className="fs-4 mb-3">Rating</h2>
 
-              {data.rating > 0 ? (
+              {venueData.rating > 0 ? (
                 <div className="card-rating d-flex align-items-center gap-1 mb-3">
                   <img src="/icons/star.svg" alt="star rating" />
-                  <span>{data.rating}</span>
+                  <span>{venueData.rating}</span>
                 </div>
               ) : (
                 <div className="card-rating d-flex align-items-center gap-1 mb-3">
-                  {/* <img src="/icons/star.svg" alt="star rating" /> */}
                   <span className="text-secondary">
                     No rating yet for this venue
                   </span>
@@ -149,18 +160,20 @@ function Venue() {
               )}
 
               <h2 className="fs-4 mb-3">Description</h2>
-              <p className="fs-6 lead">{data.description}</p>
+              <p className="fs-6 lead">{venueData.description}</p>
               <hr />
               <div className="host-container d-flex align-items-center p-2 ps-0">
-                <Image src={data.owner.avatar.url} roundedCircle />
+                <Image src={venueData.owner.avatar.url} roundedCircle />
                 <div className="ms-2">
                   <span>
-                    {capitalizeWords(replaceSpecialCharacters(data.owner.name))}
+                    {capitalizeWords(
+                      replaceSpecialCharacters(venueData.owner.name)
+                    )}
                   </span>
                   <span className="ms-1">is your host</span>
                   <div className="mt-2 d-flex align-items-center gap-1">
                     <FontAwesomeIcon icon={faEnvelope} size="lg" />
-                    <span>{data.owner.email}</span>
+                    <span>{venueData.owner.email}</span>
                   </div>
                 </div>
               </div>
@@ -187,26 +200,28 @@ function Venue() {
               </picture>
               <figcaption>
                 <address className="mb-1 fw-semibold fs-4">
-                  {data.location.address}
+                  {venueData.location.address}
                 </address>
                 <address className="mb-1 fst-italic fs-5">
-                  {data.location.city}, {data.location.country}
+                  {venueData.location.city}, {venueData.location.country}
                 </address>
               </figcaption>
             </figure>
           </div>
           <BookingDesktop
-            venue={data}
+            venue={venueData}
             onDateChange={handleDateChange}
             startDate={startDate}
             endDate={endDate}
+            onBookingSuccess={handleBookingSuccess}
           />
         </div>
         <BookingMobile
-          venue={data}
+          venue={venueData}
           onDateChange={handleDateChange}
           startDate={startDate}
           endDate={endDate}
+          onBookingSuccess={handleBookingSuccess}
         />
       </article>
       <Offcanvas

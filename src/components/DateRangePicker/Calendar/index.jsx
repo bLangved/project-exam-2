@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   format,
   parseISO,
@@ -9,12 +9,14 @@ import {
   getDaysInMonth,
   addMonths,
   subMonths,
+  addDays,
+  subDays,
 } from "date-fns";
 
 const Calendar = ({
   bookings,
   onDateChange,
-  onPriceChange,
+  priceChange,
   maxGuests,
   guests,
   setGuests,
@@ -28,13 +30,8 @@ const Calendar = ({
   useEffect(() => {
     if (startDate && endDate) {
       onDateChange(startDate.toISOString(), endDate.toISOString());
-    } else {
-      onDateChange(
-        startDate ? startDate.toISOString() : null,
-        endDate ? endDate.toISOString() : null
-      );
     }
-  }, [startDate, endDate, onDateChange]);
+  }, [startDate, endDate]);
 
   const daysInMonth = Array.from(
     { length: getDaysInMonth(currentDate) },
@@ -46,25 +43,27 @@ const Calendar = ({
       );
       return {
         day: i + 1,
-        date: dayDate,
+        date: startOfDay(dayDate),
       };
     }
   );
 
-  const unavailableDays = bookings.map((booking) => {
-    return {
-      start: parseISO(booking.dateFrom),
-      end: parseISO(booking.dateTo),
-    };
-  });
+  const unavailableDays = bookings.map((booking) => ({
+    start: startOfDay(parseISO(booking.dateFrom)),
+    end: startOfDay(parseISO(booking.dateTo)),
+  }));
 
-  const isUnavailable = (date) => {
-    return unavailableDays.some(
-      ({ start, end }) =>
-        isBefore(startOfDay(date), startOfDay(start)) &&
-        isBefore(startOfDay(date), startOfDay(end))
-    );
-  };
+  const isUnavailable = useCallback(
+    (date) => {
+      if (isBefore(date, today)) return true;
+      return unavailableDays.some(
+        ({ start, end }) =>
+          isAfter(startOfDay(date), subDays(startOfDay(start), 1)) &&
+          isBefore(startOfDay(date), addDays(startOfDay(end), 1))
+      );
+    },
+    [today, unavailableDays]
+  );
 
   const selectDate = (date) => {
     if (!isUnavailable(date) && !isBefore(date, today)) {
@@ -92,17 +91,10 @@ const Calendar = ({
     }
   };
 
-  const nextMonth = () => {
-    setCurrentDate(addMonths(currentDate, 1));
-  };
+  const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
+  const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
-  const prevMonth = () => {
-    setCurrentDate(subMonths(currentDate, 1));
-  };
-
-  const handleGuestChange = (e) => {
-    setGuests(e.target.value);
-  };
+  const handleGuestChange = (e) => setGuests(e.target.value);
 
   return (
     <div>
@@ -150,6 +142,7 @@ const Calendar = ({
               isAfter(date, startDate) &&
               isBefore(date, endDate));
           const isHovering = hoveringDate && isSameDay(date, hoveringDate);
+          const unavailable = isUnavailable(date);
 
           return (
             <div
@@ -171,20 +164,20 @@ const Calendar = ({
                   ? "#add8e6"
                   : isToday
                   ? "#0d6efd"
-                  : isUnavailable(date)
-                  ? "#f8d7da"
-                  : isPast
-                  ? "#e0e0e0"
+                  : unavailable
+                  ? isPast
+                    ? "#e0e0e0"
+                    : "#f8d7da"
                   : "#d4edda",
                 color:
                   isSelected && endDate
                     ? "white"
-                    : isPast || isUnavailable(date)
+                    : unavailable
                     ? "#a0a0a0"
                     : isToday
                     ? "white"
                     : "black",
-                pointerEvents: isPast || isUnavailable(date) ? "none" : "auto",
+                pointerEvents: isPast || unavailable ? "none" : "auto",
               }}
             >
               {day}
@@ -209,10 +202,10 @@ const Calendar = ({
           ))}
         </select>
       </div>
-      {onPriceChange ? (
+      {priceChange ? (
         <div className="d-flex w-100">
           <span>Total</span>
-          <span className="ms-auto">{onPriceChange}</span>
+          <span className="ms-auto">{priceChange}</span>
           <span>,-</span>
         </div>
       ) : (

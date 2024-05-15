@@ -3,7 +3,13 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import { format, parseISO, differenceInDays } from "date-fns";
 import DateRangePicker from "../../../components/DateRangePicker";
 
-function BookingMobile({ venue, onDateChange, startDate, endDate }) {
+function BookingMobile({
+  venue,
+  onDateChange,
+  startDate,
+  endDate,
+  onBookingSuccess,
+}) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -60,6 +66,7 @@ function BookingMobile({ venue, onDateChange, startDate, endDate }) {
             handleClose={handleClose}
             startDate={startDate}
             endDate={endDate}
+            onBookingSuccess={onBookingSuccess}
           />
         </Offcanvas.Body>
       </Offcanvas>
