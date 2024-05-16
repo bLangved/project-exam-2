@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import { format, parseISO, differenceInDays } from "date-fns";
+import { format, differenceInDays, startOfDay } from "date-fns";
 import DateRangePicker from "../../../components/DateRangePicker";
 
 function BookingMobile({
@@ -17,11 +17,36 @@ function BookingMobile({
 
   const getDaysDifference = (start, end) => {
     if (start && end) {
-      const startParsed = parseISO(start);
-      const endParsed = parseISO(end);
+      const startParsed = startOfDay(new Date(start));
+      const endParsed = startOfDay(new Date(end));
       return differenceInDays(endParsed, startParsed);
     }
     return 0;
+  };
+
+  const formatDate = (date) => {
+    if (date) {
+      return format(startOfDay(new Date(date)), "d. MMM");
+    }
+    return "";
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 992) {
+        handleClose();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const handleSubmit = () => {
+    const event = { preventDefault: () => {} };
+    document.querySelector("#dateRangePickerSubmitButton").click();
   };
 
   return (
@@ -40,9 +65,9 @@ function BookingMobile({
                   {getDaysDifference(startDate, endDate)} days
                 </span>
                 <span className="me-auto">
-                  {format(parseISO(startDate), "d. MMM")}
+                  {formatDate(startDate)}
                   <span className="mx-1">-</span>
-                  {format(parseISO(endDate), "d. MMM")}
+                  {formatDate(endDate)}
                 </span>
               </div>
             ) : (
@@ -50,15 +75,17 @@ function BookingMobile({
             )}
           </button>
         </div>
-        <button className="btn btn-primary px-1 ms-auto col-5">
+        <button
+          type="submit"
+          className="btn btn-primary px-1 ms-auto col-5"
+          onClick={handleSubmit}
+          disabled={!startDate || !endDate}
+        >
           Book venue
         </button>
       </div>
       <Offcanvas show={show} onHide={handleClose}>
-        <Offcanvas.Header closeButton>
-          {/* <Offcanvas.Title>
-          </Offcanvas.Title> */}
-        </Offcanvas.Header>
+        <Offcanvas.Header closeButton></Offcanvas.Header>
         <Offcanvas.Body>
           <DateRangePicker
             venue={venue}
@@ -67,6 +94,7 @@ function BookingMobile({
             startDate={startDate}
             endDate={endDate}
             onBookingSuccess={onBookingSuccess}
+            handleSubmit={handleSubmit}
           />
         </Offcanvas.Body>
       </Offcanvas>

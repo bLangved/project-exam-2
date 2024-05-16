@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   format,
-  parseISO,
   isBefore,
   isSameDay,
   isAfter,
@@ -12,6 +11,7 @@ import {
   addDays,
   subDays,
 } from "date-fns";
+import { Popover, OverlayTrigger } from "react-bootstrap";
 
 const Calendar = ({
   bookings,
@@ -26,10 +26,11 @@ const Calendar = ({
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [hoveringDate, setHoveringDate] = useState(null);
+  const [showPopover, setShowPopover] = useState(false);
 
   useEffect(() => {
     if (startDate && endDate) {
-      onDateChange(startDate.toISOString(), endDate.toISOString());
+      onDateChange(startDate, endDate);
     }
   }, [startDate, endDate]);
 
@@ -49,8 +50,8 @@ const Calendar = ({
   );
 
   const unavailableDays = bookings.map((booking) => ({
-    start: startOfDay(parseISO(booking.dateFrom)),
-    end: startOfDay(parseISO(booking.dateTo)),
+    start: startOfDay(new Date(booking.dateFrom)),
+    end: startOfDay(new Date(booking.dateTo)),
   }));
 
   const isUnavailable = useCallback(
@@ -72,8 +73,21 @@ const Calendar = ({
         setEndDate(null);
         setHoveringDate(null);
       } else if (isAfter(date, startDate)) {
-        setEndDate(date);
-        setHoveringDate(null);
+        const isRangeUnavailable = unavailableDays.some(
+          ({ start, end }) =>
+            isAfter(date, startDate) &&
+            isBefore(start, date) &&
+            isAfter(end, startDate)
+        );
+
+        if (isRangeUnavailable) {
+          setShowPopover(true);
+          setStartDate(null);
+          setTimeout(() => setShowPopover(false), 3000);
+        } else {
+          setEndDate(date);
+          setHoveringDate(null);
+        }
       }
     }
   };
@@ -96,6 +110,15 @@ const Calendar = ({
 
   const handleGuestChange = (e) => setGuests(e.target.value);
 
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">Invalid Date Range</Popover.Header>
+      <Popover.Body>
+        There are already dates in between that are booked.
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
     <div>
       <div className="d-flex align-items-center justify-content-center gap-3 my-3">
@@ -116,6 +139,26 @@ const Calendar = ({
         >
           &gt;
         </button>
+      </div>
+      <div className="d-lg-none">
+        <OverlayTrigger
+          show={showPopover}
+          placement="top"
+          overlay={popover}
+          trigger="manual"
+        >
+          <div className="popover-target" />
+        </OverlayTrigger>
+      </div>
+      <div className="d-none d-lg-block">
+        <OverlayTrigger
+          show={showPopover}
+          placement="left"
+          overlay={popover}
+          trigger="manual"
+        >
+          <div className="popover-target" />
+        </OverlayTrigger>
       </div>
       <div
         className="mb-3"

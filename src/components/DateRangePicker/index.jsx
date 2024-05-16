@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { format, parseISO, differenceInDays, startOfDay } from "date-fns";
+import { format, differenceInDays, startOfDay } from "date-fns";
 import Calendar from "./Calendar";
 import useManageUser from "../../hooks/useManageUser";
 import { API_BASE_URL } from "../../constants/apiUrls";
@@ -12,41 +12,33 @@ const DateRangePicker = ({
   startDate,
   endDate,
   onBookingSuccess,
+  handleSubmit,
 }) => {
-  const [selectedStartDate, setSelectedStartDate] = useState(
-    startDate ? startOfDay(parseISO(startDate)) : null
-  );
-  const [selectedEndDate, setSelectedEndDate] = useState(
-    endDate ? startOfDay(parseISO(endDate)) : null
-  );
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [priceChange, setPriceChange] = useState(null);
   const [guests, setGuests] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
 
+  const toDateString = (date) =>
+    date ? format(startOfDay(date), "dd.MMMM.yyyy") : "";
+
   useEffect(() => {
     if (startDate && endDate) {
-      setSelectedStartDate(startOfDay(parseISO(startDate)));
-      setSelectedEndDate(startOfDay(parseISO(endDate)));
-      calculateTotalPrice(
-        startOfDay(parseISO(startDate)),
-        startOfDay(parseISO(endDate))
-      );
+      setSelectedStartDate(startDate);
+      setSelectedEndDate(endDate);
+      calculateTotalPrice(startDate, endDate);
     }
   }, [startDate, endDate]);
 
   const handleDateSelection = (startDate, endDate) => {
-    const parsedStartDate = startOfDay(parseISO(startDate));
-    const parsedEndDate = startOfDay(parseISO(endDate));
-    if (
-      parsedStartDate !== selectedStartDate ||
-      parsedEndDate !== selectedEndDate
-    ) {
-      setSelectedStartDate(parsedStartDate);
-      setSelectedEndDate(parsedEndDate);
-      onDateChange(parsedStartDate.toISOString(), parsedEndDate.toISOString());
-      calculateTotalPrice(parsedStartDate, parsedEndDate);
+    if (startDate !== selectedStartDate || endDate !== selectedEndDate) {
+      setSelectedStartDate(startDate);
+      setSelectedEndDate(endDate);
+      onDateChange(startDate, endDate);
+      calculateTotalPrice(startDate, endDate);
     }
   };
 
@@ -62,24 +54,23 @@ const DateRangePicker = ({
 
   const { sendRequest } = useManageUser(`${API_BASE_URL}bookings`);
 
-  const handleSubmit = async (event) => {
+  const handleSubmitLocal = async (event) => {
     event.preventDefault();
     if (selectedStartDate && selectedEndDate) {
       const bookingData = {
-        dateFrom: selectedStartDate.toISOString(),
-        dateTo: selectedEndDate.toISOString(),
+        dateFrom: toDateString(selectedStartDate),
+        dateTo: toDateString(selectedEndDate),
         guests: guests,
         venueId: venue.id,
       };
-      console.log(bookingData);
       try {
         const data = await sendRequest("POST", bookingData);
-        console.log(data);
+        console.log("Server Response:", data);
         if (onBookingSuccess) {
           onBookingSuccess(data);
           setModalTitle("Booking registered");
           setModalMessage(
-            `Booking successful. This venue is now booked from ${selectedStartDate.toISOString()} to ${selectedEndDate.toISOString()}.`
+            `Booking successful. This venue is now booked from ${bookingData.dateFrom} to ${bookingData.dateTo}.`
           );
           setShowModal(true);
         }
@@ -90,11 +81,12 @@ const DateRangePicker = ({
       console.log("error");
     }
   };
+
   const handleCloseModal = () => setShowModal(false);
 
-  const formatDate = (dateString) => {
-    if (dateString) {
-      return format(parseISO(dateString), "d. MMMM");
+  const formatDate = (date) => {
+    if (date) {
+      return format(date, "d. MMMM");
     }
     return "";
   };
@@ -109,14 +101,14 @@ const DateRangePicker = ({
                 {differenceInDays(selectedEndDate, selectedStartDate)} days
               </span>
               <div>
-                <span>{formatDate(selectedStartDate.toISOString())}</span>
+                <span>{formatDate(selectedStartDate)}</span>
                 <span className="mx-1">-</span>
-                <span>{formatDate(selectedEndDate.toISOString())}</span>
+                <span>{formatDate(selectedEndDate)}</span>
               </div>
             </div>
           ) : (
             <div>
-              <span>{formatDate(selectedStartDate.toISOString())}</span>
+              <span>{formatDate(selectedStartDate)}</span>
               <span className="mx-1">-</span>
             </div>
           )
@@ -142,9 +134,10 @@ const DateRangePicker = ({
       </button>
       <hr className="d-none d-lg-block" />
       <button
+        id="dateRangePickerSubmitButton"
         type="submit"
         className="btn btn-primary w-100 mt-3 d-none d-lg-block"
-        onClick={handleSubmit}
+        onClick={handleSubmitLocal}
         disabled={!selectedStartDate || !selectedEndDate}
       >
         Book venue
