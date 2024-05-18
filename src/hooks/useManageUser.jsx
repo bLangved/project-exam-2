@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { UserProfileContext } from "../contexts/ProfileDataContext";
 
 /**
  * Custom hook for POST, PUT, and DELETE operations to an API.
@@ -6,12 +7,19 @@ import { useCallback } from "react";
  * @param {string} method - Request operation, like GET, POST, PUT or DELETE.
  * @param {object} data - Object data.
  */
-console.log("API Key:", import.meta.env.VITE_API_KEY);
+
 function useManageUser(url) {
+  const { userData, setUserData } = useContext(UserProfileContext);
   const sendRequest = useCallback(
     async (method, data = null) => {
       const apikey = import.meta.env.VITE_API_KEY;
-      const accessToken = JSON.parse(localStorage.getItem("accessToken"));
+      const accessToken = userData.accessToken;
+
+      if (!accessToken) {
+        console.error("Access token is missing");
+        throw new Error("Access token is missing");
+      }
+
       const config = {
         method: method,
         headers: {
@@ -21,11 +29,6 @@ function useManageUser(url) {
         },
         body: data ? JSON.stringify(data) : null,
       };
-
-      // body: method !== 'GET' ? JSON.stringify(data) : null,
-      // if (method === 'GET') {
-      //   delete config.body; // GET requests typically don't have a body
-      // }
 
       try {
         const response = await fetch(url, config);

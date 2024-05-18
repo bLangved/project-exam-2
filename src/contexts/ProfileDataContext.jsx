@@ -1,26 +1,50 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export const UserProfileContext = createContext({
-  userData: null,
+  userData: {},
   setUserData: () => {},
   clearUserData: () => {},
 });
 
-export const UserProfileProvider = ({ children }) => {
-  const [userData, setUserData] = useState(null);
+const normalizeUserData = (data) => {
+  return data.data ? data.data : data;
+};
 
-  // Function to clear user data upon logout
+export const UserProfileProvider = ({ children }) => {
+  const [userData, setUserData] = useState(() => {
+    const storedUserData = sessionStorage.getItem("userData");
+    return storedUserData ? normalizeUserData(JSON.parse(storedUserData)) : {};
+  });
+
   const clearUserData = () => {
-    setUserData(null);
+    setUserData({});
+    sessionStorage.removeItem("userData");
   };
 
-  useEffect(() => {
-    console.log("Current User Data:", userData);
-  }, [userData]);
+  const updateUserData = (data) => {
+    const normalizedData = normalizeUserData(data);
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      ...normalizedData,
+      accessToken: prevUserData.accessToken || normalizedData.accessToken,
+    }));
+    sessionStorage.setItem(
+      "userData",
+      JSON.stringify({
+        ...userData,
+        ...normalizedData,
+        accessToken: userData.accessToken || normalizedData.accessToken,
+      })
+    );
+  };
 
   return (
     <UserProfileContext.Provider
-      value={{ userData, setUserData, clearUserData }}
+      value={{
+        userData,
+        setUserData: updateUserData,
+        clearUserData,
+      }}
     >
       {children}
     </UserProfileContext.Provider>

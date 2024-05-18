@@ -1,12 +1,14 @@
 import { useCallback } from "react";
+// import { UserProfileContext } from "../../contexts/ProfileDataContext";
 
 function useFetchSearchQueries(baseUrl) {
+  // const { userData, setUserData } = useContext(UserProfileContext);
+
   const fetchData = useCallback(
     async (query) => {
       const url = `${baseUrl}q=${encodeURIComponent(query)}`;
-      console.log(url); // For debugging purposes, you can see the complete URL
       const apikey = import.meta.env.VITE_API_KEY;
-      const accessToken = JSON.parse(localStorage.getItem("accessToken"));
+      const accessToken = JSON.parse(sessionStorage.getItem("accessToken"));
       const config = {
         method: "GET",
         headers: {

@@ -4,13 +4,20 @@
  * @returns A string
  */
 export function replaceSpecialCharacters(input) {
+  if (!input) return input; // Return if input is undefined or null
   const text = input;
   const pattern = /[,.\-_]/g;
 
   return text.replace(pattern, " ");
 }
 
+/**
+ * @description Takes a string as a parameter, and capitalizes the first letter of each word.
+ * @param {string} input
+ * @returns A string
+ */
 export function capitalizeWords(input) {
+  if (!input) return input; // Return if input is undefined or null
   const text = input;
   return text
     .split(" ")

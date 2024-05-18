@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { API_BASE_URL } from "../../constants/apiUrls";
 import useManageUser from "../../hooks/useManageUser";
 import CanvasVenue from "./CanvasVenue";
 import VenueEntries from "./VenueEntries";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { UserProfileContext } from "../../contexts/ProfileDataContext";
 
 function Admin() {
+  const { userData, setUserData } = useContext(UserProfileContext);
   const [showCanvas, setShowCanvas] = useState(false);
   const [action, setAction] = useState("");
   const [venues, setVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [loading, setLoading] = useState(false);
-  const includeBookings = true;
-  const includeOwner = true;
-  const userName = JSON.parse(localStorage.getItem("userName"));
+
+  const userName = userData.name;
   const { sendRequest } = useManageUser(
-    `${API_BASE_URL}profiles/${userName}/venues/?_bookings=${includeBookings}&_owner=${includeOwner}`
+    `${API_BASE_URL}profiles/${userName}/venues/?_bookings=true&_owner=true`
   );
 
   const handleShow = (actionType, venue) => {

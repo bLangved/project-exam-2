@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Mobile from "./Mobile";
 import Desktop from "./Desktop";
@@ -16,20 +16,19 @@ import {
   faHeart,
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
+import { UserProfileContext } from "../../../contexts/ProfileDataContext";
 
 function Header() {
+  const { userData, setUserData } = useContext(UserProfileContext);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const userName = capitalizeWords(
-    replaceSpecialCharacters(
-      JSON.parse(localStorage.getItem("userName") || '""')
-    )
-  );
-
-  const isSignedIn = userName.length > 0;
+  const isSignedIn = userData && Object.keys(userData).length > 0;
+  const userName = userData.name
+    ? capitalizeWords(replaceSpecialCharacters(userData.name))
+    : "User";
 
   return (
     <header className="banner bg-body-tertiary border-bottom shadow-sm">

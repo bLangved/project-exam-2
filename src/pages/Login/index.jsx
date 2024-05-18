@@ -17,6 +17,10 @@ import ModalCentered from "../../components/Modals/ModalCentered";
 import { useNavigate } from "react-router-dom";
 import { UserProfileContext } from "../../contexts/ProfileDataContext";
 
+const normalizeUserData = (data) => {
+  return data.data ? data.data : data;
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const { sendRequest } = useRegisterLogin(`${API_AUTH_ENDPOINT}login/`);
@@ -67,30 +71,10 @@ const Login = () => {
         setLoaderShow(true);
         const data = await sendRequest("POST", userData);
         if (data) {
-          setUserData(data.data);
-          localStorage.setItem("userName", JSON.stringify(data.data.name));
-          localStorage.setItem("userEmail", JSON.stringify(data.data.email));
-          localStorage.setItem("userBio", JSON.stringify(data.data.bio));
-          localStorage.setItem(
-            "userAvatarUrl",
-            JSON.stringify(data.data.avatar.url)
-          );
-          localStorage.setItem(
-            "userAvatarAlt",
-            JSON.stringify(data.data.avatar.alt)
-          );
-          localStorage.setItem(
-            "userBannerUrl",
-            JSON.stringify(data.data.banner.url)
-          );
-          localStorage.setItem(
-            "userBannerAlt",
-            JSON.stringify(data.data.banner.alt)
-          );
-          localStorage.setItem(
-            "accessToken",
-            JSON.stringify(data.data.accessToken)
-          );
+          const normalizedData = normalizeUserData(data);
+          setUserData(normalizedData);
+          console.log(normalizedData);
+          console.log(data);
           navigate("/");
         }
       } catch (error) {
@@ -106,7 +90,6 @@ const Login = () => {
     setValidated(true);
     setLoaderShow(false);
   };
-
   return (
     <main className="d-flex justify-content-center align-items-center vh-100">
       <Container>

@@ -33,7 +33,6 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="venue/:id" element={<Venue />} />
-              <Route path="profile" element={<Profile />} />
               <Route path="venue_create" element={<VenueCreate />} />
               <Route path="venue_edit" element={<VenueEdit />} />
               <Route path="admin" element={<Admin />} />
