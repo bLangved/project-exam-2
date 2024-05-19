@@ -9,8 +9,10 @@ import {
 } from "../../utilities/TextHandling";
 import ModalUserEdit from "../../components/Modals/ModalUserEdit";
 import { Spinner } from "react-bootstrap";
+import { useNavigate, Link } from "react-router-dom";
 
 function Profile() {
+  const navigate = useNavigate();
   const { userData, setUserData } = useContext(UserProfileContext);
   const [venueData, setVenueData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -18,11 +20,11 @@ function Profile() {
   const [editType, setEditType] = useState(null);
   const [avatarError, setAvatarError] = useState(false);
   const [bannerError, setBannerError] = useState(false);
-  const [loaderShow, setLoaderShow] = useState(true); // Initially true to show loader while fetching initial data
+  const [loaderShow, setLoaderShow] = useState(true);
 
   const profileUrl = `${API_BASE_URL}profiles/${userData.name}/`;
   const profileVenuesUrl = `${profileUrl}venues?_bookings=true&_venues=true`;
-  const profileBookingsUrl = `${profileUrl}bookings?_bookings=true&_venues=true`;
+  const profileBookingsUrl = `${profileUrl}bookings?_venue=true&_customer=true`;
 
   const { sendRequest: sendProfileRequest } = useManageUser(profileUrl);
   const { sendRequest: sendVenuesRequest } = useManageUser(profileVenuesUrl);
@@ -93,6 +95,7 @@ function Profile() {
       try {
         setLoaderShow(true);
         const data = await sendBookingsRequest("GET");
+        console.log(data);
         setBookingData(data.data || []); // Ensure bookingData is an array
       } catch (error) {
         console.error("Failed to fetch booking data:", error);
@@ -121,6 +124,11 @@ function Profile() {
   const handleBioClick = () => {
     setEditType("bio");
     setModalShow(true);
+  };
+
+  const handleNavigate = (location, event) => {
+    event.stopPropagation();
+    navigate(`${location}`);
   };
 
   return (
@@ -167,51 +175,126 @@ function Profile() {
           </>
         )}
       </section>
-      <div className="container">
+      <div className="container-fluid">
         <div className="row">
           <section className="mb-5 col-lg-6">
-            <h2>Your venues</h2>
+            <div className="d-flex align-items-center">
+              <h2>Your venues</h2>
+              <Link className="ms-auto" to={`/admin`}>
+                Manage venues
+              </Link>
+            </div>
             {venueData.length > 0 ? (
-              venueData.map((venue) => (
-                <div key={venue.id} className="profile-venues">
-                  <Image
-                    src={
-                      venue.media[0]?.url || "/images/banner-placeholder.jpg"
-                    }
-                    alt={venue.media[0]?.alt || "Venue image"}
-                    fluid
-                  />
-                  <div className="d-flex flex-column">
-                    <span>Title: {venue.name}</span>
-                    <span>
-                      Location: {venue.location.city}, {venue.location.country}
-                    </span>
-                    <span>Price: ${venue.price}</span>
+              venueData.map((venue, index) => (
+                <article
+                  className="profile-venues card bg-secondary-subtle border-0 mb-3"
+                  key={index}
+                  onClick={(e) => handleNavigate(`/venue/${venue.id}`, e)}
+                >
+                  <div className="row g-0">
+                    <div className="col-3">
+                      <img
+                        className="img-fluid h-100 rounded-start"
+                        src={venue.media[0]?.url || "/images/placeholder.jpg"}
+                        alt={venue.media[0]?.alt || "Venue main image"}
+                      />
+                    </div>
+                    <div className="col-9">
+                      <div className="card-body h-100 p-2 d-flex flex-column ">
+                        <div>
+                          <h2 className="fs-5">{venue.name}</h2>
+                          {venue.rating > 0 && (
+                            <div className="card-rating d-flex align-items-center gap-1">
+                              <img src="/icons/star.svg" alt="star rating" />
+                              <span>{venue.rating}</span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="card-text">
+                          {venue.location.city}, {venue.location.country}
+                        </p>
+                        <div className="d-flex mt-auto">
+                          <div className="mt-auto">
+                            <span>Price: </span>
+                            <span>{venue.price},-</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </article>
               ))
             ) : (
-              <p>No venues found</p>
+              <p>You have not created any venues</p>
             )}
           </section>
           <section className="mb-5 col-lg-6">
-            <h2>Your bookings</h2>
+            <div className="d-flex align-items-center">
+              <h2>Your bookings</h2>
+              <Link className="ms-auto" to={`/bookings`}>
+                Manage bookings
+              </Link>
+            </div>
             {bookingData.length > 0 ? (
               bookingData.map((booking) => (
-                <div key={booking.id} className="profile-bookings">
-                  <div className="d-flex flex-column">
-                    <span>
-                      From: {new Date(booking.dateFrom).toLocaleDateString()}
-                    </span>
-                    <span>
-                      To: {new Date(booking.dateTo).toLocaleDateString()}
-                    </span>
-                    <span>Guests: {booking.guests}</span>
+                <article
+                  key={booking.id}
+                  className="profile-bookings card bg-secondary-subtle border-0 mb-3"
+                  onClick={(e) =>
+                    handleNavigate(`/venue/${booking.venue.id}`, e)
+                  }
+                >
+                  <div className="row g-0">
+                    <div className="col-3">
+                      <img
+                        className="booking-image img-fluid h-100 rounded-start"
+                        src={
+                          booking.venue.media[0]?.url ||
+                          "/images/placeholder.jpg"
+                        }
+                        alt={booking.venue.media[0]?.alt || "Venue main image"}
+                      />
+                    </div>
+                    <div className="col-9 col-md-7 p-2">
+                      <div className="display-6 fs-4">{booking.venue.name}</div>
+                      <div>
+                        <span className="fw-semibold">Guests: </span>
+                        <span>{booking.guests}</span>
+                      </div>
+                      <div className="d-flex gap-1">
+                        <span className="fw-semibold">Dates:</span>
+                        <span>
+                          {new Date(booking.dateFrom).toLocaleDateString()}
+                        </span>
+                        <span>{"-"}</span>
+                        <span>
+                          {new Date(booking.dateTo).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-0 col-md-2 d-flex flex-column p-2">
+                      <button
+                        className="btn btn-warning"
+                        onClick={(e) =>
+                          handleNavigate(`/venue/${booking.venue.id}`, e)
+                        }
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-danger mt-md-auto"
+                        onClick={(e) =>
+                          handleNavigate(`/venue/${booking.venue.id}`, e)
+                        }
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </article>
               ))
             ) : (
-              <p>No bookings found</p>
+              <p>You have not booked any venues</p>
             )}
           </section>
         </div>

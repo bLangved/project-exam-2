@@ -35,7 +35,6 @@ function Cards() {
   const handleNavigate = (venueId, event) => {
     event.stopPropagation();
     navigate(`/venue/${venueId}`);
-    console.log(`/venue/${venueId}`);
   };
 
   return (

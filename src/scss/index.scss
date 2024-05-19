@@ -135,6 +135,17 @@
   .profile-about {
     margin-top: -35px;
   }
+
+  .profile-venues,
+  .profile-bookings {
+    cursor: pointer;
+  }
+
+  .profile-bookings {
+    .booking-image {
+      height: 8em !important;
+    }
+  }
 }
 
 .admin {
