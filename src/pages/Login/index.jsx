@@ -73,8 +73,6 @@ const Login = () => {
         if (data) {
           const normalizedData = normalizeUserData(data);
           setUserData(normalizedData);
-          console.log(normalizedData);
-          console.log(data);
           navigate("/");
         }
       } catch (error) {

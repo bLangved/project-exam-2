@@ -13,12 +13,9 @@ import {
   VenueEdit,
   VenueCreate,
   Profile,
-  Wishlist,
   Login,
   Register,
   Admin,
-  Checkout,
-  CheckoutSuccess,
   RouteNotFound,
 } from "./pages/";
 
@@ -37,9 +34,6 @@ function App() {
               <Route path="venue_edit" element={<VenueEdit />} />
               <Route path="admin" element={<Admin />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="wishlist" element={<Wishlist />} />
-              <Route path="checkout" element={<Checkout />} />
-              <Route path="checkoutSuccess" element={<CheckoutSuccess />} />
               <Route path="*" element={<RouteNotFound />} />
             </Route>
           </Routes>

@@ -10,6 +10,7 @@ import {
 import ModalUserEdit from "../../components/Modals/ModalUserEdit";
 import { Spinner } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
+import ModalConfirmation from "../../components/Modals/ModalConfirmation";
 
 function Profile() {
   const navigate = useNavigate();
@@ -21,15 +22,18 @@ function Profile() {
   const [avatarError, setAvatarError] = useState(false);
   const [bannerError, setBannerError] = useState(false);
   const [loaderShow, setLoaderShow] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
   const profileUrl = `${API_BASE_URL}profiles/${userData.name}/`;
-  const profileVenuesUrl = `${profileUrl}venues?_bookings=true&_venues=true`;
-  const profileBookingsUrl = `${profileUrl}bookings?_venue=true&_customer=true`;
+  const venuesUrl = `${profileUrl}venues?_bookings=true&_venues=true`;
+  const bookingsUrl = `${profileUrl}bookings?_venue=true&_customer=true`;
 
   const { sendRequest: sendProfileRequest } = useManageUser(profileUrl);
-  const { sendRequest: sendVenuesRequest } = useManageUser(profileVenuesUrl);
-  const { sendRequest: sendBookingsRequest } =
-    useManageUser(profileBookingsUrl);
+  const { sendRequest: sendVenuesRequest } = useManageUser(venuesUrl);
+  const { sendRequest: sendBookingsRequest } = useManageUser(bookingsUrl);
+  const { sendRequest: deleteRequest } = useManageUser("");
 
   function refreshProfileData() {
     const fetchData = async () => {
@@ -55,7 +59,6 @@ function Profile() {
     setBannerError(true);
   };
 
-  // Fetch profile data
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
@@ -72,13 +75,12 @@ function Profile() {
     fetchProfileData();
   }, [sendProfileRequest]);
 
-  // Fetch profile venue data
   useEffect(() => {
     const fetchVenueData = async () => {
       try {
         setLoaderShow(true);
         const data = await sendVenuesRequest("GET");
-        setVenueData(data.data || []); // Ensure venueData is an array
+        setVenueData(data.data || []);
       } catch (error) {
         console.error("Failed to fetch venue data:", error);
       } finally {
@@ -89,14 +91,12 @@ function Profile() {
     fetchVenueData();
   }, [sendVenuesRequest]);
 
-  // Fetch profile bookings data
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
         setLoaderShow(true);
         const data = await sendBookingsRequest("GET");
-        console.log(data);
-        setBookingData(data.data || []); // Ensure bookingData is an array
+        setBookingData(data.data || []);
       } catch (error) {
         console.error("Failed to fetch booking data:", error);
       } finally {
@@ -106,6 +106,34 @@ function Profile() {
 
     fetchBookingsData();
   }, [sendBookingsRequest]);
+
+  const deleteBooking = async (bookingId) => {
+    try {
+      setLoaderShow(true);
+      const deleteResponse = await deleteRequest(
+        "DELETE",
+        null,
+        `${API_BASE_URL}bookings/${bookingId}`
+      );
+      if (deleteResponse === 204) {
+        setShowModal(true);
+        setModalTitle("Booking Deleted");
+        setModalMessage("Your booking has been successfully deleted.");
+        setBookingData((prevBookingData) =>
+          prevBookingData.filter((booking) => booking.id !== bookingId)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to delete booking:", error);
+      setModalTitle("Error");
+      setModalMessage(
+        "There was an error deleting your booking. Please try again."
+      );
+      setShowModal(true);
+    } finally {
+      setLoaderShow(false);
+    }
+  };
 
   const userName = userData.name
     ? capitalizeWords(replaceSpecialCharacters(userData.name))
@@ -176,127 +204,136 @@ function Profile() {
         )}
       </section>
       <div className="container-fluid">
-        <div className="row">
-          <section className="mb-5 col-lg-6">
-            <div className="d-flex align-items-center">
-              <h2>Your venues</h2>
-              <Link className="ms-auto" to={`/admin`}>
-                Manage venues
-              </Link>
-            </div>
+        <section className="d-flex align-items-center">
+          <h2>Your venues</h2>
+          <Link className="ms-auto" to={`/admin`}>
+            Manage venues
+          </Link>
+        </section>
+        <div className="container-fluid">
+          <div className="row mb-5">
             {venueData.length > 0 ? (
               venueData.map((venue, index) => (
-                <article
-                  className="profile-venues card bg-secondary-subtle border-0 mb-3"
-                  key={index}
-                  onClick={(e) => handleNavigate(`/venue/${venue.id}`, e)}
-                >
-                  <div className="row g-0">
-                    <div className="col-3">
-                      <img
-                        className="img-fluid h-100 rounded-start"
-                        src={venue.media[0]?.url || "/images/placeholder.jpg"}
-                        alt={venue.media[0]?.alt || "Venue main image"}
-                      />
-                    </div>
-                    <div className="col-9">
-                      <div className="card-body h-100 p-2 d-flex flex-column ">
-                        <div>
-                          <h2 className="fs-5">{venue.name}</h2>
-                          {venue.rating > 0 && (
-                            <div className="card-rating d-flex align-items-center gap-1">
-                              <img src="/icons/star.svg" alt="star rating" />
-                              <span>{venue.rating}</span>
+                <div className="col-12 col-lg-6 mb-3 p-0" key={index}>
+                  <article
+                    className="profile-venues card bg-secondary-subtle border-0 mx-lg-2"
+                    onClick={(e) => handleNavigate(`/venue/${venue.id}`, e)}
+                  >
+                    <div className="row g-0">
+                      <div className="col-3">
+                        <img
+                          className="venue-image img-fluid h-100 rounded-start"
+                          src={venue.media[0]?.url || "/images/placeholder.jpg"}
+                          alt={venue.media[0]?.alt || "Venue main image"}
+                        />
+                      </div>
+                      <div className="col-9">
+                        <div className="card-body h-100 p-2 d-flex flex-column ">
+                          <div>
+                            <h2 className="fs-5">{venue.name}</h2>
+                            {venue.rating > 0 && (
+                              <div className="card-rating d-flex align-items-center gap-1">
+                                <img src="/icons/star.svg" alt="star rating" />
+                                <span>{venue.rating}</span>
+                              </div>
+                            )}
+                          </div>
+                          <p className="card-text">
+                            {venue.location.city}, {venue.location.country}
+                          </p>
+                          <div className="d-flex mt-auto">
+                            <div className="mt-auto">
+                              <span>Price: </span>
+                              <span>{venue.price},-</span>
                             </div>
-                          )}
-                        </div>
-                        <p className="card-text">
-                          {venue.location.city}, {venue.location.country}
-                        </p>
-                        <div className="d-flex mt-auto">
-                          <div className="mt-auto">
-                            <span>Price: </span>
-                            <span>{venue.price},-</span>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                </div>
               ))
             ) : (
               <p>You have not created any venues</p>
             )}
-          </section>
-          <section className="mb-5 col-lg-6">
-            <div className="d-flex align-items-center">
-              <h2>Your bookings</h2>
-              <Link className="ms-auto" to={`/bookings`}>
-                Manage bookings
-              </Link>
-            </div>
+          </div>
+        </div>
+        <section className="d-flex align-items-center">
+          <h2>Your bookings</h2>
+          <Link className="ms-auto" to={`/bookings`}>
+            Manage bookings
+          </Link>
+        </section>
+        <div className="container-fluid">
+          <div className="row mb-5">
             {bookingData.length > 0 ? (
-              bookingData.map((booking) => (
-                <article
-                  key={booking.id}
-                  className="profile-bookings card bg-secondary-subtle border-0 mb-3"
-                  onClick={(e) =>
-                    handleNavigate(`/venue/${booking.venue.id}`, e)
-                  }
-                >
-                  <div className="row g-0">
-                    <div className="col-3">
-                      <img
-                        className="booking-image img-fluid h-100 rounded-start"
-                        src={
-                          booking.venue.media[0]?.url ||
-                          "/images/placeholder.jpg"
-                        }
-                        alt={booking.venue.media[0]?.alt || "Venue main image"}
-                      />
-                    </div>
-                    <div className="col-9 col-md-7 p-2">
-                      <div className="display-6 fs-4">{booking.venue.name}</div>
-                      <div>
-                        <span className="fw-semibold">Guests: </span>
-                        <span>{booking.guests}</span>
+              bookingData.map((booking, index) => (
+                <div className="col-12 col-lg-6 mb-3 p-0" key={index}>
+                  <article
+                    className="profile-bookings card bg-secondary-subtle border-0 p-0 h-100 mx-lg-2"
+                    onClick={(e) =>
+                      handleNavigate(`/venue/${booking.venue.id}`, e)
+                    }
+                  >
+                    <div className="row g-0">
+                      <div className="col-3">
+                        <img
+                          className="booking-image img-fluid h-100 rounded-start"
+                          src={
+                            booking.venue.media[0]?.url ||
+                            "/images/placeholder.jpg"
+                          }
+                          alt={
+                            booking.venue.media[0]?.alt || "Venue main image"
+                          }
+                        />
                       </div>
-                      <div className="d-flex gap-1">
-                        <span className="fw-semibold">Dates:</span>
-                        <span>
-                          {new Date(booking.dateFrom).toLocaleDateString()}
-                        </span>
-                        <span>{"-"}</span>
-                        <span>
-                          {new Date(booking.dateTo).toLocaleDateString()}
-                        </span>
+                      <div className="col-9 col-md-6 p-2">
+                        <div className="display-6 fs-4">
+                          {booking.venue.name}
+                        </div>
+                        <div>
+                          <span className="fw-semibold">Guests: </span>
+                          <span>{booking.guests}</span>
+                        </div>
+                        <div className="d-flex gap-1">
+                          <span className="fw-semibold">Dates:</span>
+                          <span>
+                            {new Date(booking.dateFrom).toLocaleDateString()}
+                          </span>
+                          <span>{"-"}</span>
+                          <span>
+                            {new Date(booking.dateTo).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="button-group-action col-0 col-md-3 d-flex flex-column p-2">
+                        <button
+                          className="btn btn-warning ms-auto"
+                          onClick={(e) =>
+                            handleNavigate(`/venue/${booking.venue.id}`, e)
+                          }
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-danger mt-md-auto ms-auto"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteBooking(booking.id);
+                          }}
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
-                    <div className="col-0 col-md-2 d-flex flex-column p-2">
-                      <button
-                        className="btn btn-warning"
-                        onClick={(e) =>
-                          handleNavigate(`/venue/${booking.venue.id}`, e)
-                        }
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-danger mt-md-auto"
-                        onClick={(e) =>
-                          handleNavigate(`/venue/${booking.venue.id}`, e)
-                        }
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                  </article>
+                </div>
               ))
             ) : (
               <p>You have not booked any venues</p>
             )}
-          </section>
+          </div>
         </div>
       </div>
       <ModalUserEdit
@@ -304,6 +341,12 @@ function Profile() {
         onHide={() => setModalShow(false)}
         editType={editType}
         onUpdateSuccess={refreshProfileData}
+      />
+      <ModalConfirmation
+        title={modalTitle}
+        message={modalMessage}
+        show={showModal}
+        handleClose={() => setShowModal(false)}
       />
       {loaderShow && (
         <Spinner

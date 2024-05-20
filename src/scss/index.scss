@@ -139,11 +139,15 @@
   .profile-venues,
   .profile-bookings {
     cursor: pointer;
-  }
 
-  .profile-bookings {
+    .venue-image,
     .booking-image {
       height: 8em !important;
+    }
+    .button-group-action {
+      button {
+        width: 5em;
+      }
     }
   }
 }
@@ -253,5 +257,12 @@
       width: 1.5em;
       cursor: pointer;
     }
+  }
+}
+
+.page-not-found {
+  svg {
+    height: 3em;
+    cursor: auto;
   }
 }

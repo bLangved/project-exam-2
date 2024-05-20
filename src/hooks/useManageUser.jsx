@@ -3,15 +3,13 @@ import { UserProfileContext } from "../contexts/ProfileDataContext";
 
 /**
  * Custom hook for POST, PUT, and DELETE operations to an API.
- * @param {string} url - The endpoint URL for the API.
- * @param {string} method - Request operation, like GET, POST, PUT or DELETE.
- * @param {object} data - Object data.
+ * @param {string} defaultUrl - The default endpoint URL for the API.
  */
-
-function useManageUser(url) {
+function useManageUser(defaultUrl) {
   const { userData, setUserData } = useContext(UserProfileContext);
+
   const sendRequest = useCallback(
-    async (method, data = null) => {
+    async (method, data = null, url = defaultUrl) => {
       const apikey = import.meta.env.VITE_API_KEY;
       const accessToken = userData.accessToken;
 
@@ -47,7 +45,7 @@ function useManageUser(url) {
         throw error;
       }
     },
-    [url]
+    [defaultUrl, userData.accessToken]
   );
 
   return { sendRequest };
