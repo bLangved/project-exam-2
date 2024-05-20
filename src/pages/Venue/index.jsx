@@ -10,7 +10,6 @@ import {
   faUtensils,
   faCar,
   faArrowLeft,
-  faHeart,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
@@ -123,9 +122,6 @@ function Venue() {
         <div className="m-3 d-flex">
           <button className="btn outline-dark" onClick={goBack}>
             <FontAwesomeIcon icon={faArrowLeft} size="xl" />
-          </button>
-          <button className="btn outline-dark ms-auto ">
-            <FontAwesomeIcon icon={faHeart} size="xl" />
           </button>
         </div>
         <ImageCarousel images={images} handleShow={handleShow} />

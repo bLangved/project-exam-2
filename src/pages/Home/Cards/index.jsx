@@ -4,65 +4,14 @@ import useApi from "../../../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 import sliceText from "../../../utilities/TextSlicing";
 import { useVenueData } from "../../../contexts/VenueDataContext";
-import { Card, Placeholder } from "react-bootstrap";
-
-function PlaceholderCard() {
-  return (
-    <div className="col-sm-6 col-md-4 col-mdlg-4th col-lg-5th">
-      <Card className="h-100 p-0 border-0">
-        <Placeholder
-          as="div"
-          animation="glow"
-          className="card-img rounded-4"
-          style={{ height: "180px", width: "100%", backgroundColor: "#e0e0e0" }}
-        >
-          <Placeholder xs={12} style={{ height: "180px", width: "100%" }} />
-        </Placeholder>
-        <Card.Body className="d-flex flex-column p-0 my-2">
-          <div className="d-flex align-items-center justify-content-between">
-            <Placeholder as={Card.Title} animation="glow" className="w-75">
-              <Placeholder xs={6} />
-            </Placeholder>
-            <div className="card-rating d-flex align-items-center gap-1">
-              <Placeholder as="div" animation="glow">
-                <Placeholder
-                  xs={3}
-                  style={{
-                    width: "1.5rem",
-                    height: "1.5rem",
-                    borderRadius: "50%",
-                    backgroundColor: "#e0e0e0",
-                  }}
-                />
-                <Placeholder xs={3} />
-              </Placeholder>
-            </div>
-          </div>
-          <Placeholder as={Card.Text} animation="glow" className="text-muted">
-            <Placeholder xs={7} />
-          </Placeholder>
-          <Placeholder as={Card.Text} animation="glow">
-            <Placeholder xs={4} /> <Placeholder xs={4} />
-          </Placeholder>
-          <div className="mt-auto d-flex align-items-center">
-            <Placeholder as={Card.Text} animation="glow" className="me-2">
-              <Placeholder xs={3} />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={2} />
-            </Placeholder>
-          </div>
-        </Card.Body>
-      </Card>
-    </div>
-  );
-}
+import PlaceholderCards from "./PlaceholderCards";
 
 function Cards() {
   const navigate = useNavigate();
   const { venueData, setVenueData } = useVenueData();
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const requestLimit = 15;
   const endpoint = "venues/";
   const url = `${API_BASE_URL}${endpoint}?limit=${requestLimit}&page=${page}`;
@@ -79,15 +28,14 @@ function Cards() {
       if (newVenues.length > 0) {
         setVenueData((prevData) => [...prevData, ...newVenues]);
       }
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 10000);
+      setIsLoading(false);
+      setIsLoadingMore(false);
     }
   }, [data, setVenueData]);
 
   const handleShowMore = () => {
     setPage((prevPage) => prevPage + 1);
-    setIsLoading(true);
+    setIsLoadingMore(true);
   };
 
   const handleNavigate = (venueId, event) => {
@@ -100,7 +48,7 @@ function Cards() {
       <div className="row g-4">
         {isLoading
           ? Array.from({ length: requestLimit }).map((_, index) => (
-              <PlaceholderCard key={index} />
+              <PlaceholderCards key={index} />
             ))
           : venueData.map((venue, index) => (
               <div
@@ -131,21 +79,34 @@ function Cards() {
                         </div>
                       )}
                     </div>
-                    <p className="card-subtitle text-muted">
-                      {sliceText(venue.location.address, 20)}
-                    </p>
-                    <p className="card-text">
-                      {sliceText(venue.location.city, 20)},{" "}
-                      {sliceText(venue.location.country, 20)}
-                    </p>
-                    <div className="mt-auto">
-                      <span>Price: </span>
-                      <span>{venue.price},-</span>
-                    </div>
+                    {venue.location.address && (
+                      <p className="card-subtitle text-muted">
+                        {sliceText(venue.location.address, 20)}
+                      </p>
+                    )}
+                    {(venue.location.city || venue.location.country) && (
+                      <p className="card-text">
+                        {venue.location.city &&
+                          sliceText(venue.location.city, 20)}
+                        {venue.location.city && venue.location.country && ", "}
+                        {venue.location.country &&
+                          sliceText(venue.location.country, 20)}
+                      </p>
+                    )}
+                    {venue.price !== undefined && (
+                      <div className="mt-auto d-flex gap-1">
+                        <span className="fw-semibold">{venue.price},-</span>
+                        <span>per night</span>
+                      </div>
+                    )}
                   </div>
                 </article>
               </div>
             ))}
+        {isLoadingMore &&
+          Array.from({ length: requestLimit }).map((_, index) => (
+            <PlaceholderCards key={index} />
+          ))}
       </div>
       <div className="w-100 d-flex my-5">
         <button
