@@ -1,17 +1,13 @@
 import React, { useRef } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleUser, faHeart } from "@fortawesome/free-regular-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
+import { Link } from "react-router-dom";
 import Searchbar from "../Searchbar";
 
 function Desktop({ handleShow }) {
-  const navigate = useNavigate();
   const searchInputRef = useRef(null);
 
-  const handleWishlistIconClick = () => {
-    navigate("/wishlist");
-  };
   const focusSearchInput = () => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
@@ -19,31 +15,35 @@ function Desktop({ handleShow }) {
   };
 
   return (
-    <Navbar className="banner-container desktop-banner d-none d-lg-flex">
-      <Link to="/">
-        {" "}
-        <img
-          src="/logo/logo-holidaze.png"
-          alt="website logo"
-          className="mx-3"
-        />
-      </Link>
-      <Searchbar ref={searchInputRef} />
-      <ul className="icon-tabs d-flex justify-content-between my-auto mx-3 p-0">
-        <FontAwesomeIcon
-          icon={faHeart}
-          size="2xl"
-          onClick={handleWishlistIconClick}
-          color="deeppink"
-        />
+    <>
+      <Navbar className="banner-container justify-content-center d-none d-lg-flex pb-0">
+        <Link
+          className="top-banner-desktop d-flex align-items-center gap-1 ms-4 me-auto"
+          to="/"
+        >
+          <img
+            src="/logo/logo-icon_holidaze.png"
+            alt="website logo"
+            className="logo-icon-banner fit-content"
+          />
+          <img
+            src="/logo/logo-text_holidaze.png"
+            alt="website logo text"
+            className="logo-text-banner ms-n1"
+          />
+        </Link>
         <FontAwesomeIcon
           icon={faCircleUser}
           size="2xl"
           onClick={handleShow}
-          color="#0d6efd"
+          color="black"
+          className="ms-auto me-4"
         />
-      </ul>
-    </Navbar>
+      </Navbar>
+      <div className="searchbar-desktop-container d-none d-lg-flex w-50 mb-3 mx-auto">
+        <Searchbar ref={searchInputRef} />
+      </div>
+    </>
   );
 }
 

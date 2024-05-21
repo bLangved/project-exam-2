@@ -68,12 +68,12 @@ const SearchResults = ({ show, onHide, venues, isLoading }) => {
       }}
     >
       <Offcanvas.Header
-        className="bg-body-tertiary shadow-sm border-bottom"
+        className="search-queries-header bg-body-tertiary shadow-sm border-bottom d-flex align-items-center justify-content-between"
         closeButton
       >
-        <Offcanvas.Title>Results</Offcanvas.Title>
+        <Offcanvas.Title className="me-auto">Results</Offcanvas.Title>
         <FontAwesomeIcon
-          className="mx-auto w-50"
+          className="mx-auto"
           icon={currentIcon}
           size="xl"
           onClick={toggleHeight}

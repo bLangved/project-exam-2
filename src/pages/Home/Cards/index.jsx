@@ -5,16 +5,23 @@ import { useNavigate } from "react-router-dom";
 import sliceText from "../../../utilities/TextSlicing";
 import { useVenueData } from "../../../contexts/VenueDataContext";
 import PlaceholderCards from "./PlaceholderCards";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowTurnUp } from "@fortawesome/free-solid-svg-icons";
 
-function Cards() {
+function Cards({ category }) {
   const navigate = useNavigate();
   const { venueData, setVenueData } = useVenueData();
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const requestLimit = 15;
-  const endpoint = "venues/";
-  const url = `${API_BASE_URL}${endpoint}?limit=${requestLimit}&page=${page}`;
+
+  const [latestVenues, setLatestVenues] = useState([]);
+  const [wifiVenues, setWifiVenues] = useState([]);
+  const [breakfastVenues, setBreakfastVenues] = useState([]);
+  const [animalsVenues, setAnimalsVenues] = useState([]);
+
+  const url = `${API_BASE_URL}venues?limit=${requestLimit}&page=${page}&sort=created&sortOrder=desc`;
 
   const results = useApi(url);
   const data = results.data;
@@ -32,6 +39,20 @@ function Cards() {
       setIsLoadingMore(false);
     }
   }, [data, setVenueData]);
+
+  useEffect(() => {
+    setVenueData([]);
+    setPage(1);
+    setIsLoading(true);
+    setIsLoadingMore(false);
+  }, [category, setVenueData]);
+
+  const goToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const handleShowMore = () => {
     setPage((prevPage) => prevPage + 1);
@@ -52,7 +73,7 @@ function Cards() {
             ))
           : venueData.map((venue, index) => (
               <div
-                className="col-sm-6 col-md-4 col-mdlg-4th col-lg-5th"
+                className="col-sm-6 col-md-4 col-mdlg-4th col-lg-5th col-xl-2"
                 key={venue.id + index}
                 onClick={(e) => handleNavigate(venue.id, e)}
               >
@@ -114,6 +135,12 @@ function Cards() {
           onClick={handleShowMore}
         >
           Show More
+        </button>
+      </div>
+      <div className="d-flex w-100 gap-2 my-3" onClick={goToTop}>
+        <button className="btn ms-auto d-flex align-items-center gap-2">
+          <span className="fs-5">To top</span>
+          <FontAwesomeIcon icon={faArrowTurnUp} size="xl" />
         </button>
       </div>
     </section>

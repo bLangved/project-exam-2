@@ -13,7 +13,6 @@ import {
   faUserCircle,
   faArrowRightToBracket,
   faArrowRightFromBracket,
-  faHeart,
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 import { UserProfileContext } from "../../../contexts/ProfileDataContext";
@@ -63,14 +62,6 @@ function Header() {
                   <span>Profile</span>
                 </Link>
                 <Link
-                  to="/wishlist"
-                  onClick={handleClose}
-                  className="mb-3 d-flex align-items-center gap-2"
-                >
-                  <FontAwesomeIcon className="col-1" icon={faHeart} size="lg" />
-                  <span>Wishlist</span>
-                </Link>
-                <Link
                   to="/admin"
                   onClick={handleClose}
                   className="mb-3 d-flex align-items-center gap-2"
@@ -88,7 +79,7 @@ function Header() {
                 <Link
                   onClick={handleClose}
                   to="/login"
-                  className="mb-3 d-flex align-items-center gap-2"
+                  className="mb-4 d-flex align-items-center gap-2"
                 >
                   <FontAwesomeIcon
                     className="col-1"
@@ -100,7 +91,7 @@ function Header() {
                 <Link
                   to="/register"
                   onClick={handleClose}
-                  className="mb-3 d-flex align-items-center gap-2"
+                  className="mb-4 d-flex align-items-center gap-2"
                 >
                   <FontAwesomeIcon
                     className="col-1"

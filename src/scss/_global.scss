@@ -30,12 +30,36 @@ body {
 
 .banner {
   .banner-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
 
     img {
       width: auto;
       object-fit: contain;
+    }
+
+    .logo-icon-banner {
+      height: 3.5em;
+    }
+    @media screen and (min-width: 768px) {
+      .logo-text-banner {
+        width: 5em;
+      }
+    }
+    @media screen and (min-width: 992px) {
+      .logo-icon-banner {
+        height: 4em;
+      }
+      .logo-text-banner {
+        width: 6em;
+      }
+    }
+
+    .top-banner-desktop {
+      height: 5.5em;
+    }
+    .fa-circle-user {
+      height: 1.25em;
     }
   }
   .mobile-banner {
@@ -51,19 +75,31 @@ body {
   }
   .mobile-banner-bottom {
     height: 4.25em;
+
+    ul {
+      li {
+        cursor: pointer;
+
+        &:nth-child(2) {
+          position: relative;
+          bottom: 10px;
+          padding: 0.5em;
+          border-radius: 50%;
+
+          img {
+            height: 3em;
+          }
+        }
+      }
+    }
   }
-  .desktop-banner {
-    img {
-      height: 3em;
-    }
-    .icon-tabs {
-      width: 10em;
-    }
+  .searchbar-desktop-container {
+    max-width: 45em;
   }
 }
 
 main {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   min-height: 100vh;
 }
@@ -98,54 +134,3 @@ ul {
   clip: rect(0 0 0 0);
   overflow: hidden;
 }
-
-// .star-rating {
-//   display: flex;
-//   gap: 0.5em;
-
-//   .stars {
-//     display: flex;
-//     align-items: center;
-//     gap: 5px;
-
-//     .star {
-//       position: relative;
-//       display: grid;
-//       place-content: center;
-//       padding: 0;
-//       width: 20px;
-//       height: 20px;
-
-//       img {
-//         width: 100%;
-//         height: 100%;
-//         opacity: 0.3;
-//       }
-//     }
-//     .star-full img {
-//       opacity: 1;
-//     }
-//     .star-one-quarter::before,
-//     .star-half::before,
-//     .star-three-quarter::before {
-//       content: "";
-//       position: absolute;
-//       top: 0;
-//       left: 0;
-//       height: 100%;
-//       background: orange;
-//       mask: url("/icons/star.svg");
-//       mask-size: cover;
-//       opacity: 1;
-//     }
-//     .star-one-quarter::before {
-//       width: 25%;
-//     }
-//     .star-half::before {
-//       width: 50%;
-//     }
-//     .star-three-quarter::before {
-//       width: 75%;
-//     }
-//   }
-// }

@@ -30,10 +30,10 @@ const Searchbar = forwardRef((props, ref) => {
   return (
     <>
       <div className="input-group">
-        <div className="form-floating d-flex position-relative me-2">
+        <div className="form-floating d-flex position-relative">
           <input
             type="text"
-            className="form-control rounded-pill ps-4"
+            className="form-control rounded-pill ps-4 shadow-sm"
             id="searchbarInput"
             ref={ref}
             placeholder="Search for venues"

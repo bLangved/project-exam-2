@@ -38,6 +38,14 @@
       max-width: 20%;
     }
   }
+
+  @media screen and (min-width: 1200px) {
+    .col-lg-5th,
+    .col-mdlg-4th {
+      flex: initial !important;
+      max-width: initial !important;
+    }
+  }
   .show-more-btn {
     max-width: 25em;
   }
@@ -187,6 +195,19 @@
 // Search queries
 .search-queries-container {
   transition: transform 0.4s ease, height 0.4s ease !important;
+
+  .search-queries-header {
+    div {
+      width: 1em !important;
+    }
+    svg {
+      height: 1.1em;
+      width: 3em !important;
+    }
+    button {
+      width: 1em !important;
+    }
+  }
 
   .card-container {
     .card {
