@@ -116,7 +116,6 @@ function Home() {
     <>
       <CardsCategory onSelectCategory={handleCategorySelect} />
       <Cards
-        category={category}
         venueData={filteredVenues}
         isLoading={isLoading}
         isLoadingMore={isLoadingMore}

@@ -155,14 +155,18 @@
     }
   }
   figure {
-    height: 35em;
+    max-height: 35em;
     picture {
       img {
         max-height: 30em;
       }
     }
-    figcaption {
-    }
+  }
+
+  h1,
+  .venue-description,
+  address {
+    overflow-wrap: break-word;
   }
 
   .booking-desktop {
@@ -214,20 +218,34 @@
 }
 
 .admin {
-  .button-group {
-    max-width: 750px;
-    button {
-      height: 7em;
-    }
-  }
-}
+  max-width: 992px;
+  .card-container {
+    .card {
+      cursor: pointer;
 
-.avenue-card-container {
-  .card {
-    cursor: pointer;
-    height: 8.5em !important;
-    img {
-      height: 8.5em !important;
+      @media screen and (max-width: 350px) {
+        margin-bottom: 0.5rem !important;
+      }
+      height: 6em;
+      .card-image {
+        height: 6em !important;
+      }
+    }
+    @media screen and (min-width: 768px) {
+      .card {
+        height: 7em;
+        .card-image {
+          height: 7em !important;
+        }
+      }
+    }
+    @media screen and (min-width: 992px) {
+      .card {
+        height: 8em;
+        .card-image {
+          height: 8em !important;
+        }
+      }
     }
   }
 }
@@ -248,19 +266,44 @@
       width: 1em !important;
     }
   }
-
-  .card-container {
-    .card {
-      cursor: pointer;
-      .card-image {
-        height: 6em !important;
-      }
+  .offcanvas-body {
+    @media screen and (max-width: 350px) {
+      padding: 0.5rem;
     }
 
-    .card-rating {
-      img {
-        width: 1em;
-        height: 1em;
+    .card-container {
+      .card {
+        @media screen and (max-width: 350px) {
+          margin-bottom: 0.5rem !important;
+        }
+        height: 6em;
+        cursor: pointer;
+        .card-image {
+          height: 6em !important;
+        }
+      }
+      @media screen and (min-width: 768px) {
+        .card {
+          height: 7em;
+          .card-image {
+            height: 7em !important;
+          }
+        }
+      }
+      @media screen and (min-width: 992px) {
+        .card {
+          height: 8em;
+          .card-image {
+            height: 8em !important;
+          }
+        }
+      }
+
+      .card-rating {
+        img {
+          width: 1em;
+          height: 1em;
+        }
       }
     }
   }

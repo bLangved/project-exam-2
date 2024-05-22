@@ -4,9 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUpRightAndDownLeftFromCenter,
   faDownLeftAndUpRightToCenter,
+  faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
+import sliceText from "../../../../../utilities/TextSlicing";
 
 const SearchResults = ({ show, onHide, venues, isLoading }) => {
   const navigate = useNavigate();
@@ -91,46 +93,68 @@ const SearchResults = ({ show, onHide, venues, isLoading }) => {
           </div>
         ) : newVenues.length > 0 ? (
           <ListGroup className="card-container">
-            {newVenues.map((venue) => (
-              <ListGroup.Item
-                key={venue.id}
-                className="card bg-body-tertiary mb-2 p-0 shadow-sm"
-                onClick={() => {
-                  navigate(`/venue/${venue.id}`);
-                  toggleHeight();
-                }}
-              >
-                <div className="row g-0">
-                  <div className="col-4 col-sm-3">
-                    <img
-                      className="card-image img-fluid h-100 rounded-start"
-                      src={venue.media[0]?.url || "/images/placeholder.jpg"}
-                      alt={venue.media[0]?.alt || "Venue main image"}
-                    />
-                  </div>
-                  <div className="col-8 col-sm-9">
-                    <div className="card-body h-100 p-2 d-flex flex-column justify-content-between">
-                      <div className="d-flex align-items-center justify-content-between">
-                        <span>{venue.name}</span>
-                        {venue.rating > 0 && (
-                          <div className="card-rating d-flex align-items-center gap-1">
-                            <img src="/icons/star.svg" alt="star rating" />
-                            <span>{venue.rating}</span>
-                          </div>
-                        )}
+            <div className="row g-0">
+              {newVenues.map((venue) => (
+                <ListGroup.Item
+                  key={venue.id}
+                  className="p-0 col-lg-6 col-xl-4 border-0"
+                  onClick={() => {
+                    navigate(`/venue/${venue.id}`);
+                    toggleHeight();
+                  }}
+                >
+                  <div className="card bg-body-tertiary border-0 mb-3 m-lg-3 shadow">
+                    <div className="row g-0">
+                      <div className="col-3 col-lg-4">
+                        <img
+                          className="card-image img-fluid h-100 rounded-start"
+                          src={venue.media[0]?.url || "/images/placeholder.jpg"}
+                          alt={venue.media[0]?.alt || "Venue main image"}
+                        />
                       </div>
-                      <p className="card-subtitle">
-                        {venue.location.city}, {venue.location.country}
-                      </p>
-                      <div>
-                        <span>Price: </span>
-                        <span>{venue.price},-</span>
+                      <div className="col-9 col-lg-8">
+                        <div className="card-body h-100 p-2 ms-1 d-flex flex-column justify-content-between">
+                          <span className="fw-semibold">
+                            {sliceText(venue.name, 20)}
+                          </span>
+                          {(venue.location.city || venue.location.country) && (
+                            <p className="card-text mb-auto">
+                              {venue.location.city &&
+                                sliceText(venue.location.city, 10)}
+                              {venue.location.city &&
+                                venue.location.country &&
+                                ", "}
+                              {venue.location.country &&
+                                sliceText(venue.location.country, 10)}
+                            </p>
+                          )}
+                          <div className="d-flex align-items-center justify-content-between">
+                            {venue.price !== undefined && (
+                              <div className="d-flex align-items-center gap-1">
+                                <FontAwesomeIcon
+                                  icon={faDollarSign}
+                                  color="#efb41d"
+                                />
+                                <span className="fw-semibold">
+                                  {venue.price},-
+                                </span>
+                                <span>per night</span>
+                              </div>
+                            )}
+                            {venue.rating > 0 && (
+                              <div className="card-rating d-flex align-items-center gap-1">
+                                <img src="/icons/star.svg" alt="star rating" />
+                                <span>{venue.rating}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </ListGroup.Item>
-            ))}
+                </ListGroup.Item>
+              ))}
+            </div>
           </ListGroup>
         ) : (
           <p>No venues found.</p>

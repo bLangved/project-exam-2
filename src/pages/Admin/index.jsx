@@ -59,8 +59,8 @@ function Admin() {
   }, [showCanvas]);
 
   return (
-    <div className="admin">
-      <div className="container px-4 px-sm-0">
+    <div className="admin mx-auto">
+      <div className="container-fluid">
         <button
           type="button"
           className="btn btn-outline-success w-100 p-3 my-3"

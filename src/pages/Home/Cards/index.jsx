@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import sliceText from "../../../utilities/TextSlicing";
 import PlaceholderCards from "./PlaceholderCards";
-// import { useVenueData } from "../../../contexts/VenueDataContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 
-function Cards({ category, venueData, isLoading, isLoadingMore }) {
+function Cards({ venueData, isLoading, isLoadingMore }) {
   const navigate = useNavigate();
-  // const { venueData, setVenueData } = useVenueData();
 
   const handleNavigate = (venueId, event) => {
     event.stopPropagation();
@@ -64,7 +64,8 @@ function Cards({ category, venueData, isLoading, isLoadingMore }) {
                       </p>
                     )}
                     {venue.price !== undefined && (
-                      <div className="mt-auto d-flex gap-1">
+                      <div className="d-flex align-items-center mt-auto gap-1">
+                        <FontAwesomeIcon icon={faDollarSign} color="#efb41d" />
                         <span className="fw-semibold">{venue.price},-</span>
                         <span>per night</span>
                       </div>

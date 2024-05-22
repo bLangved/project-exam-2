@@ -11,6 +11,7 @@ import {
   faCar,
   faArrowLeft,
   faEnvelope,
+  faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import BookingDesktop from "./BookingDesktop";
@@ -119,7 +120,7 @@ function Venue() {
 
   return (
     <>
-      <article className="venue">
+      <article className="venue mb-3">
         <div className="venue-header-container m-2 d-flex align-items-center">
           <button className="go-back-btn btn outline-dark p-1" onClick={goBack}>
             <FontAwesomeIcon icon={faArrowLeft} size="xl" />
@@ -136,16 +137,17 @@ function Venue() {
         <div className="row m-0 px-3">
           <div className="col-lg-8 p-0">
             <section className="venue-text">
-              <h1 className="fs-3 my-3">{sliceText(venueData.name, 40)}</h1>
+              <h1 className="fs-3 my-3">{venueData.name}</h1>
               <div className="d-flex align-items-center gap-2 mb-3 text-secondary">
-                <div>
-                  <span>{venueData.maxGuests} </span>
+                <div className="d-flex align-items-center gap-1">
+                  <span className="fw-semibold">{venueData.maxGuests}</span>
                   <span>Guests</span>
                 </div>
                 <FontAwesomeIcon icon={faCircle} size="2xs" />
-                <div>
-                  <span>{venueData.price}</span>
-                  <span>,- per night</span>
+                <div className="d-flex align-items-center gap-1">
+                  <FontAwesomeIcon icon={faDollarSign} color="#efb41d" />
+                  <span className="fw-semibold">{venueData.price},-</span>
+                  <span>per night</span>
                 </div>
               </div>
               <h2 className="fs-4 mb-3">Rating</h2>
@@ -164,7 +166,9 @@ function Venue() {
               )}
 
               <h2 className="fs-4 mb-3">Description</h2>
-              <p className="fs-6 lead">{venueData.description}</p>
+              <p className="venue-description fs-6 lead">
+                {venueData.description}
+              </p>
               <hr />
               <div className="host-container d-flex align-items-center p-2 ps-0">
                 <Image src={venueData.owner.avatar.url} roundedCircle />
@@ -202,14 +206,17 @@ function Venue() {
                   className="h-100 rounded-4"
                 />
               </picture>
-              <figcaption>
-                <address className="mb-1 fw-semibold fs-4">
-                  {venueData.location.address}
-                </address>
-                <address className="mb-1 fst-italic fs-5">
-                  {venueData.location.city}, {venueData.location.country}
-                </address>
-              </figcaption>
+              {(venueData.location.city || venueData.location.country) && (
+                <figcaption>
+                  <address className="mb-1 fw-semibold fs-4">
+                    {sliceText(venueData.location.address, 50)}
+                  </address>
+                  <address className="fst-italic fs-5">
+                    {sliceText(venueData.location.city, 30)},{" "}
+                    {sliceText(venueData.location.country, 30)}
+                  </address>
+                </figcaption>
+              )}
             </figure>
           </div>
           <BookingDesktop
@@ -220,13 +227,6 @@ function Venue() {
             onBookingSuccess={handleBookingSuccess}
           />
         </div>
-        {/* <BookingMobile
-          venue={venueData}
-          onDateChange={handleDateChange}
-          startDate={startDate}
-          endDate={endDate}
-          onBookingSuccess={handleBookingSuccess}
-        /> */}
       </article>
       <Offcanvas
         className="canvas-venue"
