@@ -17,54 +17,54 @@ function CardsCategory({ onSelectCategory }) {
   };
 
   return (
-    <Navbar className="w-100">
+    <Navbar className="homepage-category-nav w-100 mt-1">
       <Nav
         justify
         variant="underline"
-        className="d-flex align-items-center justify-content-center w-75 mx-auto"
+        className="d-flex align-items-center justify-content-center mx-auto gap-1 gap-sm-3"
       >
-        <Nav.Item className="p-2">
+        <Nav.Item>
           <Nav.Link
             onClick={() => handleSelect("latest")}
-            className={`d-flex flex-column ${
+            className={`d-flex flex-column align-items-center ${
               activeCategory === "latest" ? "active" : ""
             }`}
           >
-            <FontAwesomeIcon icon={faHouse} size="lg" />
+            <FontAwesomeIcon icon={faHouse} size="lg" className="mb-1" />
             <span>Latest</span>
           </Nav.Link>
         </Nav.Item>
-        <Nav.Item className="p-2">
+        <Nav.Item>
           <Nav.Link
             onClick={() => handleSelect("wifi")}
-            className={`d-flex flex-column ${
+            className={`d-flex flex-column align-items-center ${
               activeCategory === "wifi" ? "active" : ""
             }`}
           >
-            <FontAwesomeIcon icon={faWifi} size="lg" />
+            <FontAwesomeIcon icon={faWifi} size="lg" className="mb-1" />
             <span>Wifi</span>
           </Nav.Link>
         </Nav.Item>
-        <Nav.Item className="p-2">
+        <Nav.Item>
           <Nav.Link
             onClick={() => handleSelect("breakfast")}
-            className={`d-flex flex-column ${
+            className={`d-flex flex-column align-items-center ${
               activeCategory === "breakfast" ? "active" : ""
             }`}
           >
-            <FontAwesomeIcon icon={faUtensils} size="lg" />
+            <FontAwesomeIcon icon={faUtensils} size="lg" className="mb-1" />
             <span>Breakfast</span>
           </Nav.Link>
         </Nav.Item>
-        <Nav.Item className="p-2">
+        <Nav.Item>
           <Nav.Link
-            onClick={() => handleSelect("animals")}
-            className={`d-flex flex-column ${
-              activeCategory === "animals" ? "active" : ""
+            onClick={() => handleSelect("pets")}
+            className={`d-flex flex-column align-items-center ${
+              activeCategory === "pets" ? "active" : ""
             }`}
           >
-            <FontAwesomeIcon icon={faPaw} size="lg" />
-            <span>Animals</span>
+            <FontAwesomeIcon icon={faPaw} size="lg" className="mb-1" />
+            <span>Pets</span>
           </Nav.Link>
         </Nav.Item>
       </Nav>

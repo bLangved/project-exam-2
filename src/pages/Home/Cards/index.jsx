@@ -1,63 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { API_BASE_URL } from "../../../constants/apiUrls";
-import useApi from "../../../hooks/useApi";
 import { useNavigate } from "react-router-dom";
 import sliceText from "../../../utilities/TextSlicing";
-import { useVenueData } from "../../../contexts/VenueDataContext";
 import PlaceholderCards from "./PlaceholderCards";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowTurnUp } from "@fortawesome/free-solid-svg-icons";
+// import { useVenueData } from "../../../contexts/VenueDataContext";
 
-function Cards({ category }) {
+function Cards({ category, venueData, isLoading, isLoadingMore }) {
   const navigate = useNavigate();
-  const { venueData, setVenueData } = useVenueData();
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const requestLimit = 15;
-
-  const [latestVenues, setLatestVenues] = useState([]);
-  const [wifiVenues, setWifiVenues] = useState([]);
-  const [breakfastVenues, setBreakfastVenues] = useState([]);
-  const [animalsVenues, setAnimalsVenues] = useState([]);
-
-  const url = `${API_BASE_URL}venues?limit=${requestLimit}&page=${page}&sort=created&sortOrder=desc`;
-
-  const results = useApi(url);
-  const data = results.data;
-
-  useEffect(() => {
-    if (data && data.length > 0) {
-      const newVenues = data.filter(
-        (newVenue) =>
-          !venueData.some((existingVenue) => existingVenue.id === newVenue.id)
-      );
-      if (newVenues.length > 0) {
-        setVenueData((prevData) => [...prevData, ...newVenues]);
-      }
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  }, [data, setVenueData]);
-
-  useEffect(() => {
-    setVenueData([]);
-    setPage(1);
-    setIsLoading(true);
-    setIsLoadingMore(false);
-  }, [category, setVenueData]);
-
-  const goToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  const handleShowMore = () => {
-    setPage((prevPage) => prevPage + 1);
-    setIsLoadingMore(true);
-  };
+  // const { venueData, setVenueData } = useVenueData();
 
   const handleNavigate = (venueId, event) => {
     event.stopPropagation();
@@ -68,7 +17,7 @@ function Cards({ category }) {
     <section className="card-container container-fluid my-3">
       <div className="row g-4">
         {isLoading
-          ? Array.from({ length: requestLimit }).map((_, index) => (
+          ? Array.from({ length: 15 }).map((_, index) => (
               <PlaceholderCards key={index} />
             ))
           : venueData.map((venue, index) => (
@@ -125,23 +74,9 @@ function Cards({ category }) {
               </div>
             ))}
         {isLoadingMore &&
-          Array.from({ length: requestLimit }).map((_, index) => (
+          Array.from({ length: 15 }).map((_, index) => (
             <PlaceholderCards key={index} />
           ))}
-      </div>
-      <div className="w-100 d-flex my-5">
-        <button
-          className="show-more-btn btn btn-primary w-100 mx-auto p-2"
-          onClick={handleShowMore}
-        >
-          Show More
-        </button>
-      </div>
-      <div className="d-flex w-100 gap-2 my-3" onClick={goToTop}>
-        <button className="btn ms-auto d-flex align-items-center gap-2">
-          <span className="fs-5">To top</span>
-          <FontAwesomeIcon icon={faArrowTurnUp} size="xl" />
-        </button>
       </div>
     </section>
   );

@@ -50,9 +50,9 @@ function BookingMobile({
   };
 
   return (
-    <section className="booking-mobile position-fixed d-lg-none w-100 bg-body-tertiary text-dark rounded-top-5 shadow-lg">
-      <div className="mx-4 h-100 d-flex align-items-center">
-        <div className="fs-6 col-7 d-flex flex-column">
+    <section className="booking-mobile d-lg-none ms-auto">
+      <div className="booking-mobile-content d-flex w-100 gap-2">
+        <div className="d-flex">
           <button
             className="btn p-0"
             onClick={handleShow}
@@ -77,7 +77,7 @@ function BookingMobile({
         </div>
         <button
           type="submit"
-          className="btn btn-primary px-1 ms-auto col-5"
+          className="btn btn-primary px-2 d-flex flex-column justify-content-center ms-auto"
           onClick={handleSubmit}
           disabled={!startDate || !endDate}
         >

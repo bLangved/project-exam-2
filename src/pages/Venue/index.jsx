@@ -21,6 +21,7 @@ import {
   capitalizeWords,
   replaceSpecialCharacters,
 } from "../../utilities/TextHandling";
+import sliceText from "../../utilities/TextSlicing";
 
 function Venue() {
   const [showCanvas, setShowCanvas] = useState(false);
@@ -119,16 +120,23 @@ function Venue() {
   return (
     <>
       <article className="venue">
-        <div className="m-3 d-flex">
-          <button className="btn outline-dark" onClick={goBack}>
+        <div className="venue-header-container m-2 d-flex align-items-center">
+          <button className="go-back-btn btn outline-dark p-1" onClick={goBack}>
             <FontAwesomeIcon icon={faArrowLeft} size="xl" />
           </button>
+          <BookingMobile
+            venue={venueData}
+            onDateChange={handleDateChange}
+            startDate={startDate}
+            endDate={endDate}
+            onBookingSuccess={handleBookingSuccess}
+          />
         </div>
         <ImageCarousel images={images} handleShow={handleShow} />
         <div className="row m-0 px-3">
           <div className="col-lg-8 p-0">
             <section className="venue-text">
-              <h1 className="fs-3 my-3">{venueData.name}</h1>
+              <h1 className="fs-3 my-3">{sliceText(venueData.name, 40)}</h1>
               <div className="d-flex align-items-center gap-2 mb-3 text-secondary">
                 <div>
                   <span>{venueData.maxGuests} </span>
@@ -212,13 +220,13 @@ function Venue() {
             onBookingSuccess={handleBookingSuccess}
           />
         </div>
-        <BookingMobile
+        {/* <BookingMobile
           venue={venueData}
           onDateChange={handleDateChange}
           startDate={startDate}
           endDate={endDate}
           onBookingSuccess={handleBookingSuccess}
-        />
+        /> */}
       </article>
       <Offcanvas
         className="canvas-venue"
