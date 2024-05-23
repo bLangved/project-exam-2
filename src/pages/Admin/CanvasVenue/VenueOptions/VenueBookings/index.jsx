@@ -6,24 +6,9 @@ import { Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { formatDate, totalDays } from "../../../../../utilities/FormatDate";
 
-function VenueBookings({
-  toggleBooking,
-  handleClose,
-  venue,
-  onVenueBooking,
-  isLoading,
-}) {
+function VenueBookings({ toggleBooking, venue, isLoading }) {
   const navigate = useNavigate();
   const bookings = venue.bookings;
-  console.log(bookings);
-  //   const [title, setTitle] = useState(venue.name);
-  //   const [price, setPrice] = useState(venue.price);
-  //   const [address, setAddress] = useState(venue.location.address);
-  //   const [zip, setZip] = useState(venue.location.zip);
-  //   const [city, setCity] = useState(venue.location.city);
-  //   const [imageUrls, setImageUrls] = useState(venue.media.map((img) => img.url));
-  //   const [country, setCountry] = useState(venue.location.country);
-  //   const [continent, setContinent] = useState(venue.location.continent);
 
   return (
     <div className="admin-bookings-container">
@@ -49,7 +34,7 @@ function VenueBookings({
           {bookings.map((booking) => (
             <ListGroup.Item
               key={booking.id}
-              className="card bg-body-tertiary mb-3 p-0 shadow-sm"
+              className="card bg-body-tertiary mb-3 p-0 "
               onClick={() => navigate(`/venue/${booking.id}`)}
             >
               <div className="row g-0">

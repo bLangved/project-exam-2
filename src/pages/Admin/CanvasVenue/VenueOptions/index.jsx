@@ -4,8 +4,13 @@ import VenueEdit from "./VenueEdit";
 import VenueDelete from "./VenueDelete";
 import VenueBookings from "./VenueBookings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faList } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPenToSquare,
+  faList,
+  faDollarSign,
+} from "@fortawesome/free-solid-svg-icons";
 import { formatDate, daysSince } from "../../../../utilities/FormatDate";
+import sliceText from "../../../../utilities/TextSlicing";
 
 function VenueOptions({
   handleClose,
@@ -25,34 +30,43 @@ function VenueOptions({
     <>
       {!isEditing && !isBooking ? (
         <>
-          <article className="card bg-secondary-subtle border-0 mb-2">
+          <article className="card offcanvas-card-admin border-0 mb-3 bg-dark text-light">
             <div className="row g-0">
-              <div className="col-4 col-sm-3">
+              <div className="col-3">
                 <img
-                  className="img-fluid h-100 rounded-start"
+                  className="card-image img-fluid h-100 rounded-start"
                   src={venue.media[0]?.url || "/images/placeholder.jpg"}
                   alt={venue.media[0]?.alt || "Venue main image"}
                 />
               </div>
-              <div className="col-8 col-sm-9">
-                <div className="card-body h-100 p-2 d-flex flex-column ">
-                  <div>
-                    <h2 className="fs-5">{venue.name}</h2>
+              <div className="col-9">
+                <div className="card-body h-100 p-2 ms-1 d-flex flex-column justify-content-between">
+                  <span className="fw-semibold">
+                    {sliceText(venue.name, 20)}
+                  </span>
+                  {(venue.location.city || venue.location.country) && (
+                    <p className="card-text mb-auto">
+                      {venue.location.city &&
+                        sliceText(venue.location.city, 10)}
+                      {venue.location.city && venue.location.country && ", "}
+                      {venue.location.country &&
+                        sliceText(venue.location.country, 10)}
+                    </p>
+                  )}
+                  <div className="d-flex align-items-center justify-content-between">
+                    {venue.price !== undefined && (
+                      <div className="d-flex align-items-center gap-1">
+                        <FontAwesomeIcon icon={faDollarSign} color="#efb41d" />
+                        <span className="fw-semibold">{venue.price},-</span>
+                        <span>per night</span>
+                      </div>
+                    )}
                     {venue.rating > 0 && (
                       <div className="card-rating d-flex align-items-center gap-1">
                         <img src="/icons/star.svg" alt="star rating" />
                         <span>{venue.rating}</span>
                       </div>
                     )}
-                  </div>
-                  <p className="card-text">
-                    {venue.location.city}, {venue.location.country}
-                  </p>
-                  <div className="d-flex mt-auto">
-                    <div className="mt-auto">
-                      <span>Price: </span>
-                      <span>{venue.price},-</span>
-                    </div>
                   </div>
                 </div>
               </div>

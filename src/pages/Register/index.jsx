@@ -107,7 +107,7 @@ const Register = () => {
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
               <section className="text-center">
                 <img
-                  src="/logo/logo-holidaze.png"
+                  src="/logo/logo-icon_holidaze.png"
                   alt="Holidaze logo"
                   height="75"
                   className="object-fit-contain mb-3"

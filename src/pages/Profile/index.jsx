@@ -8,9 +8,17 @@ import {
   replaceSpecialCharacters,
 } from "../../utilities/TextHandling";
 import ModalUserEdit from "../../components/Modals/ModalUserEdit";
+import ModalUserDelete from "../../components/Modals/ModalUserDelete";
+import ModalConfirmation from "../../components/Modals/ModalConfirmation";
 import { Spinner } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
-import ModalConfirmation from "../../components/Modals/ModalConfirmation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDollarSign,
+  faCalendarDays,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import sliceText from "../../utilities/TextSlicing";
 
 function Profile() {
   const navigate = useNavigate();
@@ -25,6 +33,7 @@ function Profile() {
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+  const [bookingId, setBookingId] = useState(null);
 
   const profileUrl = `${API_BASE_URL}profiles/${userData.name}/`;
   const venuesUrl = `${profileUrl}venues?_bookings=true&_venues=true`;
@@ -33,7 +42,6 @@ function Profile() {
   const { sendRequest: sendProfileRequest } = useManageUser(profileUrl);
   const { sendRequest: sendVenuesRequest } = useManageUser(venuesUrl);
   const { sendRequest: sendBookingsRequest } = useManageUser(bookingsUrl);
-  const { sendRequest: deleteRequest } = useManageUser("");
 
   function refreshProfileData() {
     const fetchData = async () => {
@@ -107,50 +115,32 @@ function Profile() {
     fetchBookingsData();
   }, [sendBookingsRequest]);
 
-  const deleteBooking = async (bookingId) => {
-    try {
-      setLoaderShow(true);
-      const deleteResponse = await deleteRequest(
-        "DELETE",
-        null,
-        `${API_BASE_URL}bookings/${bookingId}`
-      );
-      if (deleteResponse === 204) {
-        setShowModal(true);
-        setModalTitle("Booking Deleted");
-        setModalMessage("Your booking has been successfully deleted.");
-        setBookingData((prevBookingData) =>
-          prevBookingData.filter((booking) => booking.id !== bookingId)
-        );
-      }
-    } catch (error) {
-      console.error("Failed to delete booking:", error);
-      setModalTitle("Error");
-      setModalMessage(
-        "There was an error deleting your booking. Please try again."
-      );
-      setShowModal(true);
-    } finally {
-      setLoaderShow(false);
-    }
-  };
-
   const userName = userData.name
     ? capitalizeWords(replaceSpecialCharacters(userData.name))
     : "User";
-
-  const handleAvatarClick = () => {
-    setEditType("avatar");
-    setModalShow(true);
-  };
 
   const handleBannerClick = () => {
     setEditType("banner");
     setModalShow(true);
   };
 
+  const handleAvatarClick = () => {
+    setEditType("avatar");
+    setModalShow(true);
+  };
+
+  const handleVenueManagerClick = () => {
+    setEditType("venueManager");
+    setModalShow(true);
+  };
+
   const handleBioClick = () => {
     setEditType("bio");
+    setModalShow(true);
+  };
+  const handleDeleteBookingClick = (bookingId) => {
+    setEditType("deleteBooking");
+    setBookingId(bookingId);
     setModalShow(true);
   };
 
@@ -184,98 +174,140 @@ function Profile() {
           onClick={handleAvatarClick}
         />
       </div>
+
       <section className="container profile-about mb-5">
         <h1 className="text-center mb-5 display-3">{userName}</h1>
+        {userData.venueManager === false && (
+          <div className="d-flex flex-column text-center my-3">
+            <span>You are not a venue manager</span>
+            <button
+              className="btn btn-link mx-auto"
+              onClick={handleVenueManagerClick}
+            >
+              Want to become one?
+            </button>
+          </div>
+        )}
         <h2 className="">About {userName}</h2>
         {userData.bio ? (
           <>
             <p>{userData.bio}</p>
-            <button className="btn btn-primary w-100" onClick={handleBioClick}>
+            <button
+              className="change-bio-btn btn btn-primary w-100"
+              onClick={handleBioClick}
+            >
               Change bio
             </button>
           </>
         ) : (
           <>
             <p>{userData.bio}</p>
-            <button className="btn btn-primary w-100" onClick={handleBioClick}>
+            <button
+              className="change-bio-btn btn btn-primary w-100"
+              onClick={handleBioClick}
+            >
               Add a bio
             </button>
           </>
         )}
       </section>
-      <div className="container-fluid">
-        <section className="d-flex align-items-center">
-          <h2>Your venues</h2>
-          <Link className="ms-auto" to={`/admin`}>
-            Manage venues
-          </Link>
-        </section>
-        <div className="container-fluid">
-          <div className="row mb-5">
-            {venueData.length > 0 ? (
-              venueData.map((venue, index) => (
-                <div className="col-12 col-lg-6 mb-3 p-0" key={index}>
-                  <article
-                    className="profile-venues card bg-secondary-subtle border-0 mx-lg-2"
-                    onClick={(e) => handleNavigate(`/venue/${venue.id}`, e)}
-                  >
-                    <div className="row g-0">
-                      <div className="col-3">
-                        <img
-                          className="venue-image img-fluid h-100 rounded-start"
-                          src={venue.media[0]?.url || "/images/placeholder.jpg"}
-                          alt={venue.media[0]?.alt || "Venue main image"}
-                        />
-                      </div>
-                      <div className="col-9">
-                        <div className="card-body h-100 p-2 d-flex flex-column ">
-                          <div>
-                            <h2 className="fs-5">{venue.name}</h2>
-                            {venue.rating > 0 && (
-                              <div className="card-rating d-flex align-items-center gap-1">
-                                <img src="/icons/star.svg" alt="star rating" />
-                                <span>{venue.rating}</span>
-                              </div>
-                            )}
+      <div className="profile-venues-booking-container container-fluid mx-auto">
+        {userData.venueManager === true && (
+          <>
+            <section className="d-flex align-items-center">
+              <h2>Your venues</h2>
+              <Link className="ms-auto" to={`/admin`}>
+                Manage venues
+              </Link>
+            </section>
+
+            <div className="card-container container-fluid">
+              <div className="row mb-5">
+                {venueData.length > 0 ? (
+                  venueData.map((venue, index) => (
+                    <div className="col-12 col-lg-6 mb-3 p-0" key={index}>
+                      <article
+                        className="profile-venues card bg-body-tertiary border-0 mx-lg-2"
+                        onClick={(e) => handleNavigate(`/venue/${venue.id}`, e)}
+                      >
+                        <div className="row g-0">
+                          <div className="col-3">
+                            <img
+                              className="venue-image img-fluid h-100 rounded-start"
+                              src={
+                                venue.media[0]?.url || "/images/placeholder.jpg"
+                              }
+                              alt={venue.media[0]?.alt || "Venue main image"}
+                            />
                           </div>
-                          <p className="card-text">
-                            {venue.location.city}, {venue.location.country}
-                          </p>
-                          <div className="d-flex mt-auto">
-                            <div className="mt-auto">
-                              <span>Price: </span>
-                              <span>{venue.price},-</span>
+                          <div className="col-9">
+                            <div className="card-body h-100 p-2 ms-1 d-flex flex-column justify-content-between">
+                              <span className="fw-semibold">
+                                {sliceText(venue.name, 20)}
+                              </span>
+                              {(venue.location.city ||
+                                venue.location.country) && (
+                                <p className="card-text mb-auto">
+                                  {venue.location.city &&
+                                    sliceText(venue.location.city, 10)}
+                                  {venue.location.city &&
+                                    venue.location.country &&
+                                    ", "}
+                                  {venue.location.country &&
+                                    sliceText(venue.location.country, 10)}
+                                </p>
+                              )}
+                              <div className="d-flex align-items-center justify-content-between">
+                                {venue.price !== undefined && (
+                                  <div className="d-flex align-items-center gap-1">
+                                    <FontAwesomeIcon
+                                      icon={faDollarSign}
+                                      color="#efb41d"
+                                    />
+                                    <span className="fw-semibold">
+                                      {venue.price},-
+                                    </span>
+                                    <span>per night</span>
+                                  </div>
+                                )}
+                                {venue.rating > 0 && (
+                                  <div className="card-rating d-flex align-items-center gap-1">
+                                    <img
+                                      src="/icons/star.svg"
+                                      alt="star rating"
+                                    />
+                                    <span>{venue.rating}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </article>
                     </div>
-                  </article>
-                </div>
-              ))
-            ) : (
-              <p>You have not created any venues</p>
-            )}
-          </div>
-        </div>
-        <section className="d-flex align-items-center">
+                  ))
+                ) : (
+                  <p className="">You have not created any venues yet</p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+        <section>
           <h2>Your bookings</h2>
-          <Link className="ms-auto" to={`/bookings`}>
-            Manage bookings
-          </Link>
         </section>
-        <div className="container-fluid">
+        <div className="card-container container-fluid">
           <div className="row mb-5">
             {bookingData.length > 0 ? (
               bookingData.map((booking, index) => (
                 <div className="col-12 col-lg-6 mb-3 p-0" key={index}>
                   <article
-                    className="profile-bookings card bg-secondary-subtle border-0 p-0 h-100 mx-lg-2"
+                    className="profile-bookings card bg-body-tertiary border-0 p-0 h-100 mx-lg-2"
                     onClick={(e) =>
                       handleNavigate(`/venue/${booking.venue.id}`, e)
                     }
                   >
-                    <div className="row g-0">
+                    <div className="row g-0 w-100">
                       <div className="col-3">
                         <img
                           className="booking-image img-fluid h-100 rounded-start"
@@ -288,16 +320,15 @@ function Profile() {
                           }
                         />
                       </div>
-                      <div className="col-9 col-md-6 p-2">
-                        <div className="display-6 fs-4">
-                          {booking.venue.name}
-                        </div>
-                        <div>
-                          <span className="fw-semibold">Guests: </span>
-                          <span>{booking.guests}</span>
-                        </div>
-                        <div className="d-flex gap-1">
-                          <span className="fw-semibold">Dates:</span>
+                      <div className="card-body col-8 p-2 ms-1  d-flex flex-column justify-content-between">
+                        <span className="fw-semibold">
+                          {sliceText(booking.venue.name, 20)}
+                        </span>
+                        <div className="d-flex align-items-center gap-1">
+                          <FontAwesomeIcon
+                            icon={faCalendarDays}
+                            color="black"
+                          />
                           <span>
                             {new Date(booking.dateFrom).toLocaleDateString()}
                           </span>
@@ -306,32 +337,28 @@ function Profile() {
                             {new Date(booking.dateTo).toLocaleDateString()}
                           </span>
                         </div>
-                      </div>
-                      <div className="button-group-action col-0 col-md-3 d-flex flex-column p-2">
-                        <button
-                          className="btn btn-warning ms-auto"
-                          onClick={(e) =>
-                            handleNavigate(`/venue/${booking.venue.id}`, e)
-                          }
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-danger mt-md-auto ms-auto"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteBooking(booking.id);
-                          }}
-                        >
-                          Delete
-                        </button>
+                        <div className="d-flex align-items-center">
+                          <div>
+                            <span className="fw-semibold">Guests: </span>
+                            <span>{booking.guests}</span>
+                          </div>
+                          <button
+                            className="btn btn-danger ms-auto"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteBookingClick(booking.id);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faXmark} color="white" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </article>
                 </div>
               ))
             ) : (
-              <p>You have not booked any venues</p>
+              <p className="p-0">You have not booked any venues yet</p>
             )}
           </div>
         </div>
@@ -341,6 +368,14 @@ function Profile() {
         onHide={() => setModalShow(false)}
         editType={editType}
         onUpdateSuccess={refreshProfileData}
+      />
+      <ModalUserDelete
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        editType={editType}
+        refreshProfileData={refreshProfileData}
+        setBookingData={setBookingData}
+        bookingId={bookingId}
       />
       <ModalConfirmation
         title={modalTitle}

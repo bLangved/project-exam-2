@@ -134,3 +134,10 @@ ul {
   clip: rect(0 0 0 0);
   overflow: hidden;
 }
+
+.container-fluid {
+  @media screen and (max-width: 350px) {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}

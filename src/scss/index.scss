@@ -23,7 +23,24 @@
     * {
       font-size: 1rem;
     }
-
+    outline: 1px solid #e0e0e0 !important;
+    box-shadow: 3px 6px 9px rgb(205, 205, 205) !important;
+    cursor: pointer;
+    img {
+      height: 16em;
+      object-fit: cover;
+    }
+    .card-rating {
+      img {
+        width: 1em;
+        height: 1em;
+      }
+    }
+  }
+  .card-homepage {
+    * {
+      font-size: 1rem;
+    }
     cursor: pointer;
     img {
       height: 16em;
@@ -66,14 +83,19 @@
 }
 
 .card-container-placeholder {
-  .card-img {
-    background-color: #e0e0e0;
-  }
-  .card-img,
-  .card-img-background {
-    height: 16em;
-    @media screen and (min-width: 892px) {
-      height: 12em;
+  .card-placeholder {
+    outline: none !important;
+    box-shadow: none !important;
+
+    .card-img {
+      background-color: #e0e0e0;
+    }
+    .card-img,
+    .card-img-background {
+      height: 16em;
+      @media screen and (min-width: 892px) {
+        height: 12em;
+      }
     }
   }
 }
@@ -119,8 +141,16 @@
     }
     .carousel-item {
       img {
-        height: 30em;
-
+        height: 15em;
+        @media screen and (min-width: 375px) {
+          height: 20em;
+        }
+        @media screen and (min-width: 576px) {
+          height: 25em;
+        }
+        @media screen and (min-width: 768px) {
+          height: 30em;
+        }
         @media screen and (min-width: 992px) {
           border-radius: 0.5rem;
         }
@@ -142,9 +172,27 @@
     }
   }
   .host-container {
+    @media screen and (max-width: 375px) {
+      text-align: center;
+      flex-direction: column !important;
+      padding: 0 !important;
+    }
     img {
       height: 4em;
       width: 4em;
+      @media screen and (max-width: 375px) {
+        margin-bottom: 1rem;
+      }
+      @media screen and (min-width: 576px) {
+        height: 5em;
+        width: 5em;
+      }
+    }
+    .host-name,
+    .host-email {
+      span {
+        word-break: break-word;
+      }
     }
   }
   .venue-text {
@@ -183,6 +231,12 @@
   .profile-banner {
     img {
       max-height: 20em;
+
+      @media screen and (min-width: 1400px) {
+        margin-top: 1em;
+        border-radius: 0 0 1rem 1rem;
+        border-radius: 1rem;
+      }
     }
   }
 
@@ -198,20 +252,25 @@
   }
 
   .profile-about {
+    max-width: 992px;
     margin-top: -35px;
   }
 
-  .profile-venues,
-  .profile-bookings {
-    cursor: pointer;
-
-    .venue-image,
-    .booking-image {
-      height: 8em !important;
+  .change-bio-btn {
+    @media screen and (min-width: 768px) {
+      max-width: fit-content;
     }
-    .button-group-action {
-      button {
-        width: 5em;
+  }
+
+  .profile-venues-booking-container {
+    max-width: 992px;
+    .profile-venues,
+    .profile-bookings {
+      cursor: pointer;
+
+      .venue-image,
+      .booking-image {
+        height: 8em !important;
       }
     }
   }
@@ -373,6 +432,15 @@
       height: 1.5em;
       width: 1.5em;
       cursor: pointer;
+    }
+  }
+
+  .offcanvas-card-admin {
+    outline: 1px solid #e0e0e0 !important;
+    box-shadow: 3px 6px 9px rgb(205, 205, 205) !important;
+    height: 7em;
+    .card-image {
+      height: 7em !important;
     }
   }
 }

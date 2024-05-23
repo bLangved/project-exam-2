@@ -92,7 +92,7 @@ const SearchResults = ({ show, onHide, venues, isLoading }) => {
             ></Spinner>
           </div>
         ) : newVenues.length > 0 ? (
-          <ListGroup className="card-container">
+          <ListGroup className="card-container mb-5">
             <div className="row g-0">
               {newVenues.map((venue) => (
                 <ListGroup.Item
@@ -103,7 +103,7 @@ const SearchResults = ({ show, onHide, venues, isLoading }) => {
                     toggleHeight();
                   }}
                 >
-                  <div className="card bg-body-tertiary border-0 mb-3 m-lg-3 shadow">
+                  <div className="card border-0 mb-3 m-lg-3 bg-body-tertiary">
                     <div className="row g-0">
                       <div className="col-3 col-lg-4">
                         <img

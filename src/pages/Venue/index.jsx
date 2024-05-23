@@ -134,7 +134,7 @@ function Venue() {
           />
         </div>
         <ImageCarousel images={images} handleShow={handleShow} />
-        <div className="row m-0 px-3">
+        <div className="row m-0 container-fluid px-sm-3">
           <div className="col-lg-8 p-0">
             <section className="venue-text">
               <h1 className="fs-3 my-3">{venueData.name}</h1>
@@ -172,14 +172,17 @@ function Venue() {
               <hr />
               <div className="host-container d-flex align-items-center p-2 ps-0">
                 <Image src={venueData.owner.avatar.url} roundedCircle />
-                <div className="ms-2">
+                <div className="host-name ms-2">
                   <span>
                     {capitalizeWords(
                       replaceSpecialCharacters(venueData.owner.name)
-                    )}
+                    )}{" "}
+                    is your host
                   </span>
-                  <span className="ms-1">is your host</span>
-                  <div className="mt-2 d-flex align-items-center gap-1">
+                  <div className="host-email mt-2 d-flex d-sm-none">
+                    <span>{venueData.owner.email}</span>
+                  </div>
+                  <div className="host-email mt-2 d-none d-sm-flex align-items-center gap-1">
                     <FontAwesomeIcon icon={faEnvelope} size="lg" />
                     <span>{venueData.owner.email}</span>
                   </div>

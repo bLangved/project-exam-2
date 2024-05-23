@@ -26,7 +26,7 @@ function Cards({ venueData, isLoading, isLoadingMore }) {
                 key={venue.id + index}
                 onClick={(e) => handleNavigate(venue.id, e)}
               >
-                <article className="card h-100 p-0 border-0">
+                <article className="card-homepage h-100 p-0 border-0">
                   <img
                     className="card-img rounded-4"
                     src={venue.media[0]?.url || "/images/placeholder.jpg"}

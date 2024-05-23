@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserProfileContext } from "../../../contexts/ProfileDataContext";
 import { Modal, Button, Form, Image, Alert } from "react-bootstrap";
 import useManageUser from "../../../hooks/useManageUser";
 import { API_BASE_URL } from "../../../constants/apiUrls";
 
 function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
+  const { userData, setUserData } = useContext(UserProfileContext);
   const [inputValue, setInputValue] = useState("");
   const [title, setTitle] = useState("");
   const [label, setLabel] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const userId = JSON.parse(localStorage.getItem("userName"));
-  const profileUrl = `${API_BASE_URL}profiles/${userId}/`;
+  const profileUrl = `${API_BASE_URL}profiles/${userData.name}/`;
   const { sendRequest: sendProfileUpdate } = useManageUser(profileUrl);
 
   useEffect(() => {
-    // Set specific titles and labels based on the edit type
     if (editType === "avatar") {
       setTitle("Edit Avatar");
       setLabel("New Avatar URL");
@@ -23,6 +23,9 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
     } else if (editType === "bio") {
       setTitle("Edit Bio");
       setLabel("New bio");
+    } else if (editType === "venueManager") {
+      setTitle("Become a venue manager?");
+      setLabel("");
     }
   }, [editType]);
 
@@ -48,6 +51,12 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
       updateData.avatar = { url: inputValue || "", alt: "User avatar" };
     } else if (editType === "banner") {
       updateData.banner = { url: inputValue || "", alt: "User banner" };
+    } else if (editType === "venueManager") {
+      if (inputValue.trim().toUpperCase() !== "YES") {
+        setErrorMessage('Please enter "YES" to confirm.');
+        return;
+      }
+      updateData.venueManager = true;
     }
 
     try {
@@ -90,6 +99,13 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
                 value={inputValue}
                 onChange={handleChange}
               />
+            ) : editType === "venueManager" ? (
+              <Form.Control
+                type="text"
+                placeholder={`Enter "YES" to confirm`}
+                value={inputValue}
+                onChange={handleChange}
+              />
             ) : (
               <Form.Control
                 type="text"
@@ -99,7 +115,7 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
               />
             )}
           </Form.Group>
-          {inputValue && editType !== "bio" && (
+          {inputValue && editType !== "bio" && editType !== "venueManager" && (
             <Image src={inputValue} alt="Preview" fluid />
           )}
           {errorMessage && (
@@ -112,7 +128,7 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
       <Modal.Footer>
         <Button onClick={handleClose}>Close</Button>
         <Button variant="primary" onClick={handleSubmit}>
-          Update {editType}
+          {editType === "venueManager" ? `Update` : `Update ${editType}`}
         </Button>
       </Modal.Footer>
     </Modal>

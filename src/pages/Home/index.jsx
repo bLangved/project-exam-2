@@ -80,7 +80,6 @@ function Home() {
           setPetsVenues((prevData) => [...prevData, ...filteredData]);
         }
       }
-
       setIsLoading(false);
       setIsLoadingMore(false);
     }

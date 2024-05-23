@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
+import { UserProfileContext } from "../../contexts/ProfileDataContext";
 import { API_BASE_URL } from "../../constants/apiUrls";
 import useManageUser from "../../hooks/useManageUser";
 import CanvasVenue from "./CanvasVenue";
 import VenueEntries from "./VenueEntries";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { UserProfileContext } from "../../contexts/ProfileDataContext";
 
 function Admin() {
   const { userData, setUserData } = useContext(UserProfileContext);

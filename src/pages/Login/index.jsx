@@ -96,7 +96,7 @@ const Login = () => {
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
               <section className="text-center">
                 <img
-                  src="/logo/logo-holidaze.png"
+                  src="/logo/logo-icon_holidaze.png"
                   alt="Holidaze logo"
                   height="75"
                   className="object-fit-contain mb-3"
@@ -143,16 +143,6 @@ const Login = () => {
                   </Form.Control.Feedback>
                 )}
               </FloatingLabel>
-
-              <div className="d-flex mb-3">
-                <Form.Group controlId="formBasicCheckbox">
-                  <Form.Check type="checkbox" label="Remember me" />
-                </Form.Group>
-
-                <Link to="/" className="ms-auto">
-                  Forgot password
-                </Link>
-              </div>
 
               <Button variant="primary" type="submit" className="w-100 mb-3">
                 Sign in

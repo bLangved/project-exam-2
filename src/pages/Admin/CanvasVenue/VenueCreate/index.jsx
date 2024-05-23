@@ -108,6 +108,11 @@ function VenueCreate({ handleClose, handleSubmissionResult, onVenueCreate }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (parseInt(guests, 10) < 1) {
+      setErrorMessage("Guests must be at least 1");
+      return;
+    }
+
     const venueData = {
       name: title,
       description: description,
@@ -186,6 +191,7 @@ function VenueCreate({ handleClose, handleSubmissionResult, onVenueCreate }) {
             type="number"
             placeholder="Amount"
             value={guests}
+            min={1}
             onChange={handleGuestsChange}
             required
           />
