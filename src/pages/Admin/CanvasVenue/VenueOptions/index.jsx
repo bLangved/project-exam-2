@@ -103,7 +103,6 @@ function VenueOptions({
           <VenueDelete
             venueId={venue.id}
             onVenueDelete={onVenueDelete}
-            handleSubmissionResult={handleSubmissionResult}
             handleClose={handleClose}
           />
         </>

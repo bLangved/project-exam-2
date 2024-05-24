@@ -44,7 +44,6 @@ function Venue() {
   useEffect(() => {
     if (data) {
       setVenueData(data);
-      console.log(data);
     }
   }, [data]);
 

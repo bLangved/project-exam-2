@@ -116,6 +116,25 @@ function VenueEdit({
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (parseInt(guests, 10) < 1) {
+      setErrorMessage("Guests must be at least 1");
+      return;
+    }
+    if (parseInt(guests, 10) > 99) {
+      setErrorMessage("Maximum number of guests are 99");
+      return;
+    }
+
+    if (parseFloat(price) <= 0) {
+      setErrorMessage("Price must be higher then 0");
+      return;
+    }
+
+    if (parseFloat(price) > 9999) {
+      setErrorMessage("Price can not be higher then 9999");
+      return;
+    }
+
     const venueData = {
       name: title,
       description: description,
@@ -148,7 +167,6 @@ function VenueEdit({
       handleClose();
       handleSubmissionResult(true, "Success", "Venue successfully edited!");
     } catch (error) {
-      console.log(error);
       setErrorMessage(error.status || "Unknown error occurred");
       handleSubmissionResult(
         false,
@@ -219,7 +237,9 @@ function VenueEdit({
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label className="fw-semibold">Add venue images</Form.Label>
+          <Form.Label className="fw-semibold d-flex flex-column">
+            Add venue images
+          </Form.Label>
           {imageUrls.map((url, index) => (
             <Form.Group
               key={index}
