@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { format, differenceInDays, startOfDay } from "date-fns";
 import DateRangePicker from "../../../components/DateRangePicker";
+import { UserProfileContext } from "../../../contexts/ProfileDataContext";
 
 function BookingMobile({
   venue,
@@ -10,6 +11,7 @@ function BookingMobile({
   endDate,
   onBookingSuccess,
 }) {
+  const { userData, setUserData } = useContext(UserProfileContext);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -71,22 +73,24 @@ function BookingMobile({
                 </span>
               </div>
             ) : (
-              <span>Select dates</span>
+              <span className="text-primary">Select dates</span>
             )}
           </button>
         </div>
-        <button
-          type="submit"
-          className="btn btn-primary px-2 d-flex flex-column justify-content-center ms-auto"
-          onClick={handleSubmit}
-          disabled={!startDate || !endDate}
-        >
-          Book venue
-        </button>
+        {userData && userData.name && (
+          <button
+            type="submit"
+            className="btn btn-primary px-2 d-flex flex-column justify-content-center ms-auto"
+            onClick={handleSubmit}
+            disabled={!startDate || !endDate}
+          >
+            Book venue
+          </button>
+        )}
       </div>
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton></Offcanvas.Header>
-        <Offcanvas.Body>
+        <Offcanvas.Body className="p-2 p-sm-3">
           <DateRangePicker
             venue={venue}
             onDateChange={onDateChange}

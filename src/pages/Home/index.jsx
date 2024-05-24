@@ -17,6 +17,7 @@ function Home() {
   const [wifiVenues, setWifiVenues] = useState([]);
   const [breakfastVenues, setBreakfastVenues] = useState([]);
   const [petsVenues, setPetsVenues] = useState([]);
+  const [parkingVenues, setParkingVenues] = useState([]);
 
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,6 +81,17 @@ function Home() {
           setPetsVenues((prevData) => [...prevData, ...filteredData]);
         }
       }
+      if (category === "parking") {
+        filteredData = sortCategory(data, "parking").filter(
+          (newVenue) =>
+            !parkingVenues.some(
+              (existingVenue) => existingVenue.id === newVenue.id
+            )
+        );
+        if (filteredData.length > 0) {
+          setParkingVenues((prevData) => [...prevData, ...filteredData]);
+        }
+      }
       setIsLoading(false);
       setIsLoadingMore(false);
     }
@@ -90,6 +102,7 @@ function Home() {
     if (category === "wifi") return wifiVenues;
     if (category === "breakfast") return breakfastVenues;
     if (category === "pets") return petsVenues;
+    if (category === "parking") return parkingVenues;
     return [];
   };
 

@@ -165,7 +165,7 @@ const Calendar = ({
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(7, 1fr)",
-          gap: "4px",
+          gap: "2px",
           cursor: "pointer",
         }}
       >
@@ -193,7 +193,7 @@ const Calendar = ({
               onMouseEnter={() => hoverDate(date)}
               onClick={() => selectDate(date)}
               style={{
-                padding: "10px",
+                padding: "9px",
                 display: "flex",
                 justifyContent: "center",
                 borderRadius: "5px",

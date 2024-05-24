@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { format, differenceInDays, startOfDay } from "date-fns";
 import Calendar from "./Calendar";
 import useManageUser from "../../hooks/useManageUser";
 import { API_BASE_URL } from "../../constants/apiUrls";
 import ModalConfirmation from "../Modals/ModalConfirmation";
+import { UserProfileContext } from "../../contexts/ProfileDataContext";
+import { useNavigate } from "react-router-dom";
 
 const DateRangePicker = ({
   venue,
@@ -14,6 +16,8 @@ const DateRangePicker = ({
   onBookingSuccess,
   handleSubmit,
 }) => {
+  const navigate = useNavigate();
+  const { userData, setUserData } = useContext(UserProfileContext);
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [priceChange, setPriceChange] = useState(null);
@@ -21,7 +25,6 @@ const DateRangePicker = ({
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
-
   const toDateString = (date) =>
     date ? format(startOfDay(date), "dd.MMMM.yyyy") : "";
 
@@ -91,6 +94,10 @@ const DateRangePicker = ({
     return "";
   };
 
+  const handleClick = (location) => {
+    navigate(`/${location}`);
+  };
+
   return (
     <div className="my-3">
       <div className="d-flex my-2 fw-semibold">
@@ -125,23 +132,39 @@ const DateRangePicker = ({
         setGuests={setGuests}
       />
       <hr className="d-lg-none" />
-      <button
-        type="button"
-        className="btn btn-secondary w-100 d-lg-none"
-        onClick={handleClose}
-      >
-        Save
-      </button>
+      {userData && userData.name && (
+        <button
+          type="button"
+          className="btn btn-secondary w-100 d-lg-none"
+          onClick={handleClose}
+        >
+          Save
+        </button>
+      )}
       <hr className="d-none d-lg-block" />
-      <button
-        id="dateRangePickerSubmitButton"
-        type="submit"
-        className="btn btn-primary w-100 mt-3 d-none d-lg-block"
-        onClick={handleSubmitLocal}
-        disabled={!selectedStartDate || !selectedEndDate}
-      >
-        Book venue
-      </button>
+      {userData && userData.name ? (
+        <button
+          id="dateRangePickerSubmitButton"
+          type="submit"
+          className="btn btn-primary w-100 mt-3 d-none d-lg-block"
+          onClick={handleSubmitLocal}
+          disabled={!selectedStartDate || !selectedEndDate}
+        >
+          Book venue
+        </button>
+      ) : (
+        <>
+          <div>
+            <div>You need to be logged in to book a venue.</div>
+            <button
+              className="btn btn-link p-0"
+              onClick={() => handleClick("login")}
+            >
+              Log in here
+            </button>
+          </div>
+        </>
+      )}
       <ModalConfirmation
         title={modalTitle}
         message={modalMessage}

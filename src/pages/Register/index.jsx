@@ -10,12 +10,11 @@ import {
   Spinner,
 } from "react-bootstrap";
 import ModalCentered from "../../components/Modals/ModalCentered";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import useRegisterLogin from "../../hooks/useRegisterLogin";
 import { API_AUTH_ENDPOINT } from "../../constants/apiUrls";
-import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();

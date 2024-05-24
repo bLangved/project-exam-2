@@ -6,6 +6,7 @@ import {
   faWifi,
   faUtensils,
   faPaw,
+  faSquareParking,
 } from "@fortawesome/free-solid-svg-icons";
 
 function CardsCategory({ onSelectCategory }) {
@@ -21,7 +22,7 @@ function CardsCategory({ onSelectCategory }) {
       <Nav
         justify
         variant="underline"
-        className="d-flex align-items-center justify-content-center mx-auto gap-1 gap-sm-3"
+        className="category-nav d-flex align-items-center justify-content-center mx-auto gap-1 gap-sm-3"
       >
         <Nav.Item>
           <Nav.Link
@@ -65,6 +66,21 @@ function CardsCategory({ onSelectCategory }) {
           >
             <FontAwesomeIcon icon={faPaw} size="lg" className="mb-1" />
             <span>Pets</span>
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link
+            onClick={() => handleSelect("parking")}
+            className={`d-flex flex-column align-items-center ${
+              activeCategory === "parking" ? "active" : ""
+            }`}
+          >
+            <FontAwesomeIcon
+              icon={faSquareParking}
+              size="lg"
+              className="mb-1"
+            />
+            <span>Parking</span>
           </Nav.Link>
         </Nav.Item>
       </Nav>
