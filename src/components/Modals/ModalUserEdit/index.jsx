@@ -3,6 +3,7 @@ import { UserProfileContext } from "../../../contexts/ProfileDataContext";
 import { Modal, Button, Form, Image, Alert } from "react-bootstrap";
 import useManageUser from "../../../hooks/useManageUser";
 import { API_BASE_URL } from "../../../constants/apiUrls";
+import ModalConfirmation from "../ModalConfirmation";
 
 function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
   const { userData, setUserData } = useContext(UserProfileContext);
@@ -10,6 +11,8 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
   const [title, setTitle] = useState("");
   const [label, setLabel] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
   const profileUrl = `${API_BASE_URL}profiles/${userData.name}/`;
   const { sendRequest: sendProfileUpdate } = useManageUser(profileUrl);
 
@@ -52,10 +55,26 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
     } else if (editType === "banner") {
       updateData.banner = { url: inputValue || "", alt: "User banner" };
     } else if (editType === "venueManager") {
-      if (inputValue.trim().toUpperCase() !== "YES") {
-        setErrorMessage('Please enter "YES" to confirm.');
+      const trimmedInput = inputValue.trim();
+
+      if (trimmedInput === "") {
+        setErrorMessage(
+          'The field cannot be empty. Please enter "YES" to confirm.'
+        );
         return;
       }
+
+      if (trimmedInput !== "YES") {
+        if (trimmedInput.toUpperCase() === "YES") {
+          setErrorMessage(
+            'Please write "YES" in upper-case letters to confirm.'
+          );
+        } else {
+          setErrorMessage('Please enter "YES" to confirm.');
+        }
+        return;
+      }
+
       updateData.venueManager = true;
     }
 
@@ -66,6 +85,8 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
       if (onUpdateSuccess) {
         onUpdateSuccess();
       }
+      setConfirmationMessage(`${title} has been successfully updated.`);
+      setShowConfirmationModal(true);
     } catch (error) {
       console.error("Failed to update profile:", error);
       if (error.status === 400) {
@@ -77,61 +98,71 @@ function ModalUserEdit({ show, onHide, editType, onUpdateSuccess }) {
   };
 
   return (
-    <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-      show={show}
-      onHide={onHide}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">{title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Group controlId="formInput" className="mb-3">
-            <Form.Label>{label}</Form.Label>
-            {editType === "bio" ? (
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Enter new bio"
-                value={inputValue}
-                onChange={handleChange}
-              />
-            ) : editType === "venueManager" ? (
-              <Form.Control
-                type="text"
-                placeholder={`Enter "YES" to confirm`}
-                value={inputValue}
-                onChange={handleChange}
-              />
-            ) : (
-              <Form.Control
-                type="text"
-                placeholder={`Enter ${editType} URL`}
-                value={inputValue}
-                onChange={handleChange}
-              />
+    <>
+      <Modal
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={show}
+        onHide={onHide}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">{title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formInput" className="mb-3">
+              <Form.Label>{label}</Form.Label>
+              {editType === "bio" ? (
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  placeholder="Enter new bio"
+                  value={inputValue}
+                  onChange={handleChange}
+                />
+              ) : editType === "venueManager" ? (
+                <Form.Control
+                  type="text"
+                  placeholder={`Enter "YES" to confirm`}
+                  value={inputValue}
+                  onChange={handleChange}
+                />
+              ) : (
+                <Form.Control
+                  type="text"
+                  placeholder={`Enter ${editType} URL`}
+                  value={inputValue}
+                  onChange={handleChange}
+                />
+              )}
+            </Form.Group>
+            {inputValue &&
+              editType !== "bio" &&
+              editType !== "venueManager" && (
+                <Image src={inputValue} alt="Preview" fluid />
+              )}
+            {errorMessage && (
+              <Alert variant="danger" className="mt-3">
+                {errorMessage}
+              </Alert>
             )}
-          </Form.Group>
-          {inputValue && editType !== "bio" && editType !== "venueManager" && (
-            <Image src={inputValue} alt="Preview" fluid />
-          )}
-          {errorMessage && (
-            <Alert variant="danger" className="mt-3">
-              {errorMessage}
-            </Alert>
-          )}
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={handleClose}>Close</Button>
-        <Button variant="primary" onClick={handleSubmit}>
-          {editType === "venueManager" ? `Update` : `Update ${editType}`}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleClose}>Close</Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            {editType === "venueManager" ? `Update` : `Update ${editType}`}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ModalConfirmation
+        title="Update Successful"
+        message={confirmationMessage}
+        show={showConfirmationModal}
+        handleClose={() => setShowConfirmationModal(false)}
+      />
+    </>
   );
 }
 

@@ -32,7 +32,6 @@ function useManageUser(defaultUrl) {
         const response = await fetch(url, config);
         if (!response.ok) {
           const error = response;
-          console.log(error);
           throw error;
         } else if (response.status === 204) {
           return response.status;
@@ -40,7 +39,6 @@ function useManageUser(defaultUrl) {
           return await response.json();
         }
       } catch (error) {
-        console.log(error);
         console.error("API error:", error);
         throw error;
       }

@@ -25,12 +25,13 @@ function Profile() {
   const { userData, setUserData } = useContext(UserProfileContext);
   const [venueData, setVenueData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
-  const [modalShow, setModalShow] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [editType, setEditType] = useState(null);
   const [avatarError, setAvatarError] = useState(false);
   const [bannerError, setBannerError] = useState(false);
   const [loaderShow, setLoaderShow] = useState(true);
-  const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [bookingId, setBookingId] = useState(null);
@@ -121,27 +122,27 @@ function Profile() {
 
   const handleBannerClick = () => {
     setEditType("banner");
-    setModalShow(true);
+    setShowEditModal(true);
   };
 
   const handleAvatarClick = () => {
     setEditType("avatar");
-    setModalShow(true);
+    setShowEditModal(true);
   };
 
   const handleVenueManagerClick = () => {
     setEditType("venueManager");
-    setModalShow(true);
+    setShowEditModal(true);
   };
 
   const handleBioClick = () => {
     setEditType("bio");
-    setModalShow(true);
+    setShowEditModal(true);
   };
   const handleDeleteBookingClick = (bookingId) => {
     setEditType("deleteBooking");
     setBookingId(bookingId);
-    setModalShow(true);
+    setShowDeleteModal(true);
   };
 
   const handleNavigate = (location, event) => {
@@ -176,7 +177,7 @@ function Profile() {
       </div>
 
       <section className="container profile-about mb-5">
-        <h1 className="text-center mb-5 display-3">{userName}</h1>
+        <h1 className="text-center mb-5 display-4 fw-normal">{userName}</h1>
         {userData.venueManager === false && (
           <div className="d-flex flex-column text-center my-3">
             <span>You are not a venue manager</span>
@@ -287,7 +288,7 @@ function Profile() {
                     </div>
                   ))
                 ) : (
-                  <p className="">You have not created any venues yet</p>
+                  <p className="p-0">You have not created any venues yet</p>
                 )}
               </div>
             </div>
@@ -364,14 +365,14 @@ function Profile() {
         </div>
       </div>
       <ModalUserEdit
-        show={modalShow}
-        onHide={() => setModalShow(false)}
+        show={showEditModal}
+        onHide={() => setShowEditModal(false)}
         editType={editType}
         onUpdateSuccess={refreshProfileData}
       />
       <ModalUserDelete
-        show={modalShow}
-        onHide={() => setModalShow(false)}
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
         editType={editType}
         refreshProfileData={refreshProfileData}
         setBookingData={setBookingData}
@@ -380,8 +381,8 @@ function Profile() {
       <ModalConfirmation
         title={modalTitle}
         message={modalMessage}
-        show={showModal}
-        handleClose={() => setShowModal(false)}
+        show={showConfirmationModal}
+        handleClose={() => setShowConfirmationModal(false)}
       />
       {loaderShow && (
         <Spinner
