@@ -377,6 +377,7 @@ function Profile() {
         refreshProfileData={refreshProfileData}
         setBookingData={setBookingData}
         bookingId={bookingId}
+        handleClose={() => setShowDeleteModal(false)}
       />
       <ModalConfirmation
         title={modalTitle}

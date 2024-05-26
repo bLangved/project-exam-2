@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { API_BASE_URL } from "../../../../../constants/apiUrls";
-import useManageUser from "../../../../../hooks/useManageUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import ModalUserDelete from "../../../../../components/Modals/ModalUserDelete";

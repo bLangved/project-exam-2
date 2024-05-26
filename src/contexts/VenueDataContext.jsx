@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 
-// Create the context
 const VenueDataContext = createContext();
 
-// Create a Provider Component
 export const VenueDataProvider = ({ children }) => {
   const [venueData, setVenueData] = useState([]);
 
@@ -14,7 +12,6 @@ export const VenueDataProvider = ({ children }) => {
   );
 };
 
-// Create a custom hook for using context
 export const useVenueData = () => {
   const context = useContext(VenueDataContext);
   if (!context) {

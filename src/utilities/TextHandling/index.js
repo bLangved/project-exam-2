@@ -4,7 +4,7 @@
  * @returns A string
  */
 export function replaceSpecialCharacters(input) {
-  if (!input) return input; // Return if input is undefined or null
+  if (!input) return input;
   const text = input;
   const pattern = /[,.\-_]/g;
 
@@ -17,7 +17,7 @@ export function replaceSpecialCharacters(input) {
  * @returns A string
  */
 export function capitalizeWords(input) {
-  if (!input) return input; // Return if input is undefined or null
+  if (!input) return input;
   const text = input;
   return text
     .split(" ")

@@ -68,7 +68,6 @@ const DateRangePicker = ({
       };
       try {
         const data = await sendRequest("POST", bookingData);
-        console.log("Server Response:", data);
         if (onBookingSuccess) {
           onBookingSuccess(data);
           setModalTitle("Booking registered");

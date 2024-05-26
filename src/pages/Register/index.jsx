@@ -33,6 +33,7 @@ const Register = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [password, setPassword] = useState("");
   const [passwordValid, setPasswordValid] = useState(true);
+  const [venueManager, setVenueManager] = useState(false);
 
   const handleFirstNameChange = (e) => {
     const input = e.target.value;
@@ -66,6 +67,10 @@ const Register = () => {
     e.target.setCustomValidity(isValid ? "" : "Invalid Password");
   };
 
+  const handleVenueManagerChange = (e) => {
+    setVenueManager(e.target.checked);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -79,16 +84,23 @@ const Register = () => {
         name: `${firstName}_${lastName}`,
         email: `${email}@stud.noroff.no`,
         password: password,
+        venueManager: venueManager,
       };
 
       try {
         setLoaderShow(true);
         const data = await sendRequest("POST", userData);
         if (data) {
-          console.log(data);
           setStatusCode(data.data.status);
-          setStatusMessage("Account creation successful");
+          setStatusMessage(
+            "Account creation successful. You will be redirected to the login page in a few seconds."
+          );
           setModalShow(true);
+
+          setTimeout(() => {
+            setModalShow(false);
+            navigate("/login");
+          }, 5000);
         }
       } catch (error) {
         console.error("Registration error:", error);
@@ -208,11 +220,23 @@ const Register = () => {
                 )}
               </FloatingLabel>
 
-              <Button variant="primary" type="submit" className="w-100 mb-3">
+              <Form.Check
+                type="checkbox"
+                label="I want to be a venue manager"
+                checked={venueManager}
+                onChange={handleVenueManagerChange}
+                className="mb-1"
+              />
+              <Form.Text className="text-muted">
+                You can enable this option later on your profile page if you do
+                not choose to do it now.
+              </Form.Text>
+
+              <Button variant="primary" type="submit" className="w-100 my-3">
                 Get started
               </Button>
 
-              <div className="d-flex flex-column align-items-center">
+              <div className="d-flex flex-column align-items-center ">
                 <Form.Text className="text-body-secondary mb-3 fs-6">
                   Already have an account? <Link to="/login">Login</Link>
                 </Form.Text>

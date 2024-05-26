@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import VenueSee from "./VenueSee";
 import VenueEdit from "./VenueEdit";
 import VenueDelete from "./VenueDelete";

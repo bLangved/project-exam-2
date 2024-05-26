@@ -1,9 +1,6 @@
 import { useCallback } from "react";
-// import { UserProfileContext } from "../../contexts/ProfileDataContext";
 
 function useFetchSearchQueries(baseUrl) {
-  // const { userData, setUserData } = useContext(UserProfileContext);
-
   const fetchData = useCallback(
     async (query) => {
       const url = `${baseUrl}q=${encodeURIComponent(query)}`;
