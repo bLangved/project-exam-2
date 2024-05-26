@@ -63,6 +63,12 @@ To get project up and running, use the following terminal command that installs 
 ```properties
 npm install
 ```
+
+Many of the requests done to the API requires the use of an API-key. Information regarding how to create an API-key can be found in the API-docs here: https://docs.noroff.dev/docs/v2/auth/api-key. 
+
+After the API-key is created, store this as a variable in a .env file at the root of the project directory. Since the project is setup with VITE, the default name for the API-key is used, which is "VITE_API_KEY". 
+If you feel like changing the handling of the API-key, check the React hooks inside the "hooks"-folder under src at the root of the directory. 
+
 ### Contributing
 
 As this project is a school assigment, it is not open for contributions, but feedback is allways appreciated!
