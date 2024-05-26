@@ -384,9 +384,16 @@
 .admin-bookings-container {
   .card-container {
     .card {
-      .card-img {
-        height: 4em;
-        width: 4em;
+      .card-img-container {
+        padding: 0.25em;
+        .card-img {
+          height: 3em;
+          width: 3em;
+          @media screen and (min-width: 350px) {
+            height: 4em;
+            width: 4em;
+          }
+        }
       }
     }
   }

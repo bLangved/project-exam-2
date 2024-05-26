@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { formatDate, totalDays } from "../../../../../utilities/FormatDate";
+import { formatDate } from "../../../../../utilities/FormatDate";
 
 function VenueBookings({ toggleBooking, venue, isLoading }) {
   const navigate = useNavigate();
@@ -34,11 +34,10 @@ function VenueBookings({ toggleBooking, venue, isLoading }) {
           {bookings.map((booking) => (
             <ListGroup.Item
               key={booking.id}
-              className="card bg-body-tertiary mb-3 p-0 "
-              onClick={() => navigate(`/venue/${booking.id}`)}
+              className="card bg-body-tertiary mb-3 p-0"
             >
               <div className="row g-0">
-                <div className="col-2 d-flex">
+                <div className="card-img-container col-2 d-flex">
                   <Image
                     src={booking.customer.avatar.url}
                     alt={booking.customer.avatar.alt}
@@ -56,18 +55,13 @@ function VenueBookings({ toggleBooking, venue, isLoading }) {
                         {booking.customer?.email || "No email"}
                       </span>
                     </div>
-                    <div className="date d-flex gap-1">
+                    <div className="date d-flex flex-wrap gap-1">
                       <span className="">{formatDate(booking.dateFrom)}</span>
                       <span>-</span>
                       <span className="">{formatDate(booking.dateTo)}</span>
-                      <span>
-                        ({totalDays(booking.dateFrom, booking.dateTo)} days)
-                      </span>
                     </div>
                     <div className="guests d-flex gap-1">
-                      <span className="">
-                        Number of guests: {booking.guests}
-                      </span>
+                      <span className="">Guests: {booking.guests}</span>
                     </div>
                   </div>
                 </div>
