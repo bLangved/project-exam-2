@@ -6,6 +6,7 @@ This is my delivery for my "Project exam 2". The goal for the assigment was as f
 
 "To take the skills learned over the last two years and take on an extensive project where the finished product should reflect the candidate’s general development capabilities, in addition to visual and technical skills."
 
+Live link to site: https://bhlweb-holidaze.netlify.app/
 
 ## Status
 
